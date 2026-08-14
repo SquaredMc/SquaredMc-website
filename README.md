@@ -109,13 +109,20 @@ window becomes dead scroll. Keep any easing gentle.
 
 ## Deployment
 
-Deploys to **GitHub Pages** on every push to `main`, via
-[`.github/workflows/deploy.yml`](.github/workflows/deploy.yml).
+Live at **https://squaredmc.github.io/SquaredMc-website/**, redeployed on every
+push to `main` via [`.github/workflows/deploy.yml`](.github/workflows/deploy.yml).
 
 **Why Pages over Vercel here:** Vercel was the default preference, but linking a
 Vercel project needs an interactive OAuth login or a personal access token that
 wasn't available when this was set up. Pages was wireable end-to-end from the
-repo alone. The tradeoff is real and worth knowing:
+repo alone.
+
+> **Note:** Pages doesn't serve private repos on GitHub's free plan, so this
+> repo was switched to **public** to publish. If it needs to go private again,
+> the site has to move to Vercel (or the org needs a paid plan) — Pages will
+> stop serving it.
+
+The tradeoff between the two is worth knowing:
 
 | | GitHub Pages | Vercel |
 | --- | --- | --- |
