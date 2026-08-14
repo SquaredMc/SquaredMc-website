@@ -1,0 +1,62 @@
+/* Minimal reset. The site itself is black-on-black by design — the hero, the
+   copy section and the handoff section all paint their own opaque #000
+   background so they cover the hero's fixed logo/squares layers on scroll. */
+
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+}
+
+html {
+    background-color: #000;
+    /* The hero shrink and the handoff both scrub off scroll position — smooth
+       scrolling would desync the scrub from the wheel. Leave this as auto. */
+    scroll-behavior: auto;
+}
+
+body {
+    margin: 0;
+    background-color: #000;
+    color: #fff;
+    font-family: "Space Grotesk", system-ui, -apple-system, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    /* Horizontal panes slide to ±100% off-screen; without this the page would
+       gain a horizontal scrollbar while they're parked. */
+    overflow-x: hidden;
+}
+
+a {
+    color: inherit;
+}
+
+/* Horizontal work rail in ScrollHandoffSection. Keeps the rail scrollable by
+   touch/trackpad but tones the scrollbar down to match the black-on-black
+   treatment — the default overlay bar reads as a bright white slab. */
+.work-rail {
+    scrollbar-width: thin;
+    scrollbar-color: rgba(255, 255, 255, 0.18) transparent;
+}
+
+.work-rail::-webkit-scrollbar {
+    height: 6px;
+}
+
+.work-rail::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.work-rail::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.18);
+}
+
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+}
