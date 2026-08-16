@@ -155,18 +155,18 @@ var from the workflow so assets resolve from the root again.
 - **Nav link targets.** `navItems` in `App.tsx` currently points at `#work`,
   `#about`, `#contact`. Only `#work` resolves to a real element — About and
   Contact sections don't exist yet.
-- **Two spec/source discrepancies are still left as the source has them** — the
-  ported code is the tuned version, so it won:
-  1. **Background square opacity** ranges are `0.04–0.35` (white) and
-     `0.04–0.52` (colored). The spec said both should be `0.04–0.28`.
-  2. The **letter cascade** uses randomized per-pixel delays
-     (`LETTERS_START + random(1.1) + random(0.45)`), not the spec's fixed
-     "250ms reveal, 100ms stagger, letter *n* starts at 600 + n×100ms".
+- **One spec/source discrepancy is still left as the source has it:** the
+  **letter cascade** uses randomized per-pixel delays (`LETTERS_START +
+  random(1.1) + random(0.45)`), not the spec's fixed "250ms reveal, 100ms
+  stagger, letter *n* starts at 600 + n×100ms". Say the word and it's a quick
+  change.
 
-  Say the word on either and they're quick changes.
-
-  A third discrepancy — the border being a static shape rather than pushable
-  blocks — has since been **resolved in favour of the spec**; see below.
+  Two others have since been **resolved in favour of the spec**: the border is
+  now pushable blocks rather than a static shape (see below), and the
+  background squares now share one opacity range (`SQUARE_OPACITY_MIN/MAX`,
+  `0.04–0.28`). They previously differed — white `0.04–0.35`, colored
+  `0.04–0.52` — which let the colored squares read noticeably hotter than the
+  white ones. Square counts are unchanged at 42 white / 30 colored.
 
 ## Interactive logo border
 

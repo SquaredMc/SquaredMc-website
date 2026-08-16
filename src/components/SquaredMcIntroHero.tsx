@@ -294,6 +294,13 @@ const BLOCK_DUR = 0.55
 // drawing itself in.
 const LOGO_FADE_DUR = 0.8
 
+// ── Background square appearance ─────────────────────────────────────────────
+// White and colored squares draw from the SAME opacity range. They used to
+// differ (white 0.04–0.35, colored 0.04–0.52), which let the colored ones read
+// noticeably hotter than the white ones.
+const SQUARE_OPACITY_MIN = 0.04
+const SQUARE_OPACITY_MAX = 0.28
+
 // ── Background square physics ────────────────────────────────────────────────
 const PUSH_RADIUS = 160
 const PUSH_STRENGTH = 22
@@ -408,6 +415,8 @@ export default function SquaredMcIntroHero({
     // Border thickness (sw) is randomized for every square now — previously
     // only the colored ones varied in thickness, white squares were a fixed
     // 1px, which is why they all looked the same weight.
+    // Opacity comes from one shared range for both colors — see
+    // SQUARE_OPACITY_MIN/MAX above.
     const fSquares = useMemo<FSquare[]>(() => {
         const rnd = (a: number, b: number) => a + Math.random() * (b - a)
         const pick = <T,>(arr: T[]) =>
@@ -420,7 +429,7 @@ export default function SquaredMcIntroHero({
             size: rnd(32, 190),
             x: rnd(3, 91),
             y: rnd(2, 91),
-            op: rnd(0.04, 0.35),
+            op: rnd(SQUARE_OPACITY_MIN, SQUARE_OPACITY_MAX),
             color: "255,255,255",
             sw: pick(swOptions),
         }))
@@ -430,7 +439,7 @@ export default function SquaredMcIntroHero({
             size: rnd(18, 200),
             x: rnd(2, 90),
             y: rnd(2, 90),
-            op: rnd(0.04, 0.52),
+            op: rnd(SQUARE_OPACITY_MIN, SQUARE_OPACITY_MAX),
             color: pick(rgbPrimaries),
             sw: pick(swOptions),
         }))
