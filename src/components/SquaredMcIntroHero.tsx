@@ -2,11 +2,18 @@
  * SquaredMcIntroHero.tsx
  *
  * Ported out of Framer (was a Code Component) into this standalone Vite app.
- * The only things changed in the port: the `framer` import and the
- * `addPropertyControls` block at the bottom are gone, and each former property
- * control is now a normal React prop carrying the same default. The animation
- * logic, physics constants and timings below are untouched from the tuned
- * Framer version — see README "Open TODOs" before changing any of them.
+ * Changed in the port: the `framer` import and the `addPropertyControls` block
+ * at the bottom are gone, and each former property control is now a normal
+ * React prop carrying the same default.
+ *
+ * Every physics constant and animation timing below is the tuned Framer value —
+ * see README "Open TODOs" before changing any of them.
+ *
+ * ONE DELIBERATE CHANGE FROM THE FRAMER SOURCE: the logo border was a single
+ * static SVG fill path there, so the cursor couldn't disturb it. It's now 116
+ * individual 10-unit blocks sharing the letters' spring physics — see
+ * BORDER_BLOCKS below. The boot sequence is untouched; the blocks fade in on
+ * exactly the same `_bfill_` timing the solid path used.
  *
  * NOTE ON THE FILENAME: in Framer this file existed under two spellings at
  * different points (`SquaredMcIntroHero.tsx` and `SquareMcIntroHero.tsx`,
@@ -14,9 +21,10 @@
  *
  * WHAT THIS IS
  * The self-contained interactive hero layer: the logo intro-draw animation,
- * the cursor "liquid pixel-push" hover distortion on the logo, the 72
- * floating background squares with cursor-push physics, and the
- * scroll-driven shrink/fade of the logo into a small sticky header mark.
+ * the cursor "liquid pixel-push" hover distortion on both the logo letters and
+ * the logo border, the 72 floating background squares with cursor-push
+ * physics, and the scroll-driven shrink/fade of the logo into a small sticky
+ * header mark.
  *
  * WHAT THIS DELIBERATELY LEAVES OUT
  * - The real page copy/headline/paragraph that goes below the hero — that's
@@ -227,6 +235,54 @@ const PIXEL_LIST: SvgRect[] = LETTER_DATA.flatMap((l) =>
     l.squares.map(insetToSvgRect)
 )
 
+// ── Border blocks ────────────────────────────────────────────────────────────
+// BORDER_PATH is a 300×300 square minus a 280×280 inner square (evenodd), i.e.
+// a 10-unit-thick frame. Rebuilt here as individual 10-unit blocks on the same
+// grid the letters sit on, so the cursor can push them with the exact same
+// spring physics — one static shape can't be pushed apart.
+//
+//   30 across the top + 30 across the bottom + 28 down each side = 116 blocks.
+//
+// The blocks REPLACE the solid fill path only. The clockwise draw-in wipe is
+// still the stroked paths (_bm_ / _bfl*_), so the boot sequence is unchanged:
+// the blocks fade in on the same _bfill_ timing the solid path used to.
+const BORDER_BLOCK = 10
+
+// Rects are drawn very slightly larger than their grid cell so neighbours
+// overlap a hair at rest. Without this, 116 abutting rects show faint
+// antialiasing seams where the old single path was solid. Symmetric, so each
+// block's centre — and therefore its physics — is unaffected.
+const BORDER_BLEED = 0.25
+
+const BORDER_BLOCKS: SvgRect[] = (() => {
+    const blocks: SvgRect[] = []
+    const n = 300 / BORDER_BLOCK // 30 cells per side
+    const cell = (x: number, y: number): SvgRect => ({
+        x: x - BORDER_BLEED,
+        y: y - BORDER_BLEED,
+        w: BORDER_BLOCK + BORDER_BLEED * 2,
+        h: BORDER_BLOCK + BORDER_BLEED * 2,
+    })
+
+    for (let i = 0; i < n; i++) {
+        blocks.push(cell(i * BORDER_BLOCK, 0)) // top edge
+        blocks.push(cell(i * BORDER_BLOCK, 300 - BORDER_BLOCK)) // bottom edge
+    }
+    // Sides skip the first and last row — the corners belong to top/bottom.
+    for (let j = 1; j < n - 1; j++) {
+        blocks.push(cell(0, j * BORDER_BLOCK)) // left edge
+        blocks.push(cell(300 - BORDER_BLOCK, j * BORDER_BLOCK)) // right edge
+    }
+    return blocks
+})()
+
+// Letters and border blocks share ONE physics list, one offsets array and one
+// integration loop, so they are pushed and spring back identically. Letters
+// occupy indices [0, PIXEL_LIST.length) and border blocks the rest — that
+// split is what the two render passes below index into.
+const PHYS_LIST: SvgRect[] = [...PIXEL_LIST, ...BORDER_BLOCKS]
+const BORDER_OFFSET = PIXEL_LIST.length
+
 // ── Timing ───────────────────────────────────────────────────────────────────
 const LETTERS_START = BDR * 0.56
 const LETTER_SPREAD = 1.1
@@ -394,8 +450,8 @@ export default function SquaredMcIntroHero({
         }))
     }
 
-    if (pixPhysRef.current.length !== PIXEL_LIST.length) {
-        pixPhysRef.current = PIXEL_LIST.map(() => ({
+    if (pixPhysRef.current.length !== PHYS_LIST.length) {
+        pixPhysRef.current = PHYS_LIST.map(() => ({
             ox: 0,
             oy: 0,
             vx: 0,
@@ -483,7 +539,7 @@ export default function SquaredMcIntroHero({
             const W = window.innerWidth
             const H = window.innerHeight
 
-            // ── Letter pixel spring ──────────────────────────────────────────────
+            // ── Letter + border block spring ─────────────────────────────────────
             const logoEl = logoRef.current
             if (logoEl) {
                 const lr = logoEl.getBoundingClientRect()
@@ -493,8 +549,8 @@ export default function SquaredMcIntroHero({
                 const csy = (int.cursorY - lr.top) * toSvg
 
                 const pixPhys = pixPhysRef.current
-                for (let i = 0; i < PIXEL_LIST.length; i++) {
-                    const r = PIXEL_LIST[i]
+                for (let i = 0; i < PHYS_LIST.length; i++) {
+                    const r = PHYS_LIST[i]
                     const p = pixPhys[i]
                     if (!p) continue
 
@@ -823,17 +879,30 @@ export default function SquaredMcIntroHero({
                         viewBox="0 0 300 300"
                         fill="none"
                     >
-                        <path
-                            d={BORDER_PATH}
-                            fill="white"
-                            fillRule="evenodd"
-                            className={
-                                prefersReducedMotion
-                                    ? undefined
-                                    : `_bfill_${animKey}`
-                            }
-                            opacity={prefersReducedMotion ? 1 : undefined}
-                        />
+                        {/* Border, as 116 pushable blocks rather than one solid
+                            path. Same _bfill_ timing the path had, so the boot
+                            sequence is unchanged — but each block now has a
+                            physics entry and springs away from the cursor
+                            exactly like the letter pixels do. */}
+                        {BORDER_BLOCKS.map((r, i) => (
+                            <rect
+                                key={`bb-${i}`}
+                                ref={(el) => {
+                                    pixRefs.current[BORDER_OFFSET + i] = el
+                                }}
+                                x={r.x}
+                                y={r.y}
+                                width={r.w}
+                                height={r.h}
+                                fill="white"
+                                className={
+                                    prefersReducedMotion
+                                        ? undefined
+                                        : `_bfill_${animKey}`
+                                }
+                                opacity={prefersReducedMotion ? 1 : undefined}
+                            />
+                        ))}
                         {!prefersReducedMotion && (
                             <>
                                 <path
