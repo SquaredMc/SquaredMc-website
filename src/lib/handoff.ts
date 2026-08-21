@@ -11,30 +11,47 @@
 /** A cubic-bezier control-point tuple, e.g. [0.16, 1, 0.3, 1]. */
 export type BezierEase = [number, number, number, number]
 
+/** Scroll runway the stage needs, in vh, excluding the 100vh frame itself. */
+export function stageRunway(n: number, hold: number, handoff: number): number {
+    return n * hold + Math.max(0, n - 1) * handoff
+}
+
+export interface HandoffTiming {
+    /** vh of scroll each pane sits still. */
+    hold: number
+    /** vh of scroll each handoff takes. */
+    handoff: number
+    /** Point within a handoff (0-1) where the outgoing pane is gone. */
+    midpoint: number
+    /** Point within a handoff (0-1) where the incoming pane has arrived. */
+    settled: number
+}
+
 /**
- * Keyframes for pane `i` of `n`, as a (input, output) pair for useTransform.
+ * Keyframes for pane `i` of `n`, as an (input, output) pair for useTransform.
  *
- * Progress 0..1 splits into (n - 1) equal cycles, one per handoff. Pane i
- * leaves during cycle i and arrives during cycle i-1, so the two windows never
- * overlap and at most one pane is ever in motion:
+ * The timeline alternates HOLD and HANDOFF phases, measured in vh of scroll:
  *
- *   cycle    0 ─────────── midpoint ─────────── settled ──── 1
- *   outgoing 0% ────────► -100% ──── (parked off-screen left) ────►
- *   incoming (parked off-screen right) ──── 100% ────────► 0% ────►
+ *   hold 0 │ handoff 0 │ hold 1 │ handoff 1 │ hold 2
+ *   ├──────┼───────────┼────────┼───────────┼──────┤
+ *   pane 0 │ 0 ──► 1   │ pane 1 │ 1 ──► 2   │ pane 2
  *
- * `lead` holds the FIRST pane still for that fraction of the runway before any
- * of it starts; the cycles are squeezed into what remains.
+ * Every pane gets a real rest, including the middle ones. An earlier version
+ * derived rests from the tail of each handoff window instead, which left the
+ * middle panes with almost no stop — you could scroll straight past them.
+ *
+ * Within one handoff the outgoing pane exits over [0, midpoint] and the
+ * incoming pane arrives over [midpoint, settled], so the two never overlap and
+ * at most one pane is ever in motion.
  */
 export function paneKeyframes(
     i: number,
     n: number,
-    midpoint: number,
-    settled: number,
-    lead: number = 0
+    { hold, handoff, midpoint, settled }: HandoffTiming
 ): { input: number[]; output: string[] } {
-    const len = 1 / Math.max(1, n - 1)
-    // Squeeze the cycles into whatever runway is left after the lead-in hold.
-    const at = (t: number) => lead + t * (1 - lead)
+    const total = stageRunway(n, hold, handoff)
+    const unit = hold + handoff // one hold plus the handoff that follows it
+    const at = (vh: number) => vh / total // vh position -> 0..1 progress
 
     const input: number[] = []
     const output: string[] = []
@@ -48,20 +65,22 @@ export function paneKeyframes(
     }
 
     if (i > 0) {
-        const c = i - 1 // arrives during the previous cycle
+        // Arrives during the handoff that follows the previous pane's hold.
+        const start = (i - 1) * unit + hold
         input.push(0)
         output.push("100%")
-        push(at(c * len + len * midpoint), "100%")
-        push(at(c * len + len * settled), "0%")
+        push(at(start + handoff * midpoint), "100%")
+        push(at(start + handoff * settled), "0%")
     } else {
         input.push(0)
         output.push("0%")
     }
 
     if (i < n - 1) {
-        const c = i // leaves during its own cycle
-        push(at(c * len), "0%") // holds until its cycle begins
-        push(at(c * len + len * midpoint), "-100%")
+        // Rests through its own hold, then leaves during the next handoff.
+        const start = i * unit + hold
+        push(at(start), "0%")
+        push(at(start + handoff * midpoint), "-100%")
         push(1, "-100%")
     } else {
         push(1, "0%")

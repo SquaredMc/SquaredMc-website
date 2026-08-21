@@ -41,6 +41,7 @@
 import { useRef, type CSSProperties, type ReactNode } from "react"
 import {
     paneKeyframes,
+    stageRunway,
     PLACEHOLDER_WORK,
     type BezierEase,
     type WorkItem,
@@ -58,21 +59,20 @@ import {
 /** Fraction of viewport height left clear at the top for the hero squares. */
 const SQUARES_SLICE = 0.3
 /** Scroll runway per handoff, in vh. More = slower, longer handoffs. */
-const SCROLL_PER_HANDOFF = 200
+const SCROLL_PER_HANDOFF = 180
+/**
+ * vh of scroll each pane sits still before the next handoff starts.
+ *
+ * Every pane gets this, not just the first. The rests used to fall out of the
+ * tail of each handoff window, which gave the middle panes almost no stop —
+ * they slid in and kept going, so you could scroll straight past them without
+ * the text ever settling.
+ */
+const SCROLL_PER_HOLD = 70
 /** Point within a cycle where the outgoing pane is gone and the next starts. */
 const HANDOFF_MIDPOINT = 0.45
 /** Point within a cycle where the incoming pane has fully arrived. */
 const PANE_SETTLED_AT = 0.9
-/**
- * Fraction of the runway the FIRST pane holds still before it starts leaving.
- *
- * Without this the opening copy begins sliding out the instant the frame pins,
- * so it never rests anywhere readable — it finishes rising into place and
- * immediately leaves. The lead-in gives it a beat at rest first. Every cycle
- * below is squeezed into the remaining (1 - lead) of the runway, so the
- * handoff structure itself is unchanged.
- */
-const LEAD_HOLD = 0.12
 /**
  * Easing applied within each keyframe segment. Default is undefined = linear,
  * i.e. the slide tracks the wheel 1:1, which is what a scrubbed animation
@@ -91,14 +91,14 @@ export interface ScrollHandoffSectionProps {
     panes: ReactNode[]
     /** Fraction of viewport height kept clear at the top. Default 0.3. */
     squaresSlice?: number
-    /** Scroll runway per handoff, in vh. Default 200. */
+    /** Scroll runway per handoff, in vh. Default 180. */
     scrollPerHandoff?: number
+    /** vh of scroll each pane sits still. Default 70. */
+    scrollPerHold?: number
     /** Point in a cycle (0-1) where the outgoing pane is gone. Default 0.45. */
     handoffMidpoint?: number
     /** Point in a cycle (0-1) where the incoming pane has arrived. Default 0.9. */
     paneSettledAt?: number
-    /** Fraction of runway the first pane rests before leaving. Default 0.12. */
-    leadHold?: number
     /** Easing curve. Omit for linear — see the note on EASE above. */
     ease?: BezierEase
 }
@@ -129,9 +129,9 @@ export default function ScrollHandoffSection({
     panes,
     squaresSlice = SQUARES_SLICE,
     scrollPerHandoff = SCROLL_PER_HANDOFF,
+    scrollPerHold = SCROLL_PER_HOLD,
     handoffMidpoint = HANDOFF_MIDPOINT,
     paneSettledAt = PANE_SETTLED_AT,
-    leadHold = LEAD_HOLD,
     ease = EASE,
 }: ScrollHandoffSectionProps) {
     const containerRef = useRef<HTMLDivElement>(null)
@@ -168,9 +168,15 @@ export default function ScrollHandoffSection({
         )
     }
 
-    // 100vh for the frame itself, plus a runway per handoff. The frame pins for
+    // 100vh for the frame itself, plus the runway. The frame pins for
     // (height - 100vh), which is exactly the runway.
-    const height = `${100 + Math.max(1, panes.length - 1) * scrollPerHandoff}vh`
+    const timing = {
+        hold: scrollPerHold,
+        handoff: scrollPerHandoff,
+        midpoint: handoffMidpoint,
+        settled: paneSettledAt,
+    }
+    const height = `${100 + stageRunway(panes.length, scrollPerHold, scrollPerHandoff)}vh`
 
     return (
         // No background on the shell — painting it here would cover the squares
@@ -198,9 +204,7 @@ export default function ScrollHandoffSection({
                         const { input, output } = paneKeyframes(
                             i,
                             panes.length,
-                            handoffMidpoint,
-                            paneSettledAt,
-                            leadHold
+                            timing
                         )
                         return (
                             <Pane

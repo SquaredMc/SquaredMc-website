@@ -106,38 +106,59 @@ every layer's animation runs across the *entire* scroll range independently, so
 outgoing and incoming content always moved together. Here every pane reads the
 same `scrollYProgress` and maps it through its own keyframe window.
 
-Progress splits into (paneCount - 1) equal cycles, one per handoff. Within a
-cycle the outgoing pane exits by `handoffMidpoint` and the incoming one arrives
-between `handoffMidpoint` and `paneSettledAt`. Measured from the real
-`paneKeyframes` output for the current 3 panes:
+The timeline alternates **hold** and **handoff** phases, both measured in vh of
+scroll:
+
+```
+hold 0 │ handoff 0 │ hold 1 │ handoff 1 │ hold 2
+├──────┼───────────┼────────┼───────────┼──────┤
+pane 0 │  0 ──► 1  │ pane 1 │  1 ──► 2  │ pane 2
+```
+
+Within one handoff the outgoing pane exits over `[0, handoffMidpoint]` and the
+incoming one arrives over `[handoffMidpoint, paneSettledAt]`. Measured from the
+real `paneKeyframes` output for the current 3 panes:
 
 | progress | intro | what we do | work |
 | --- | --- | --- | --- |
-| 0 – 0.12 | 0% (resting) | 100% parked | 100% parked |
-| 0.20 | -40% leaving | 100% parked | 100% parked |
-| 0.32 | -100% gone | 100% parked | 100% parked |
-| 0.44 | -100% | 38% arriving | 100% parked |
-| 0.52 | -100% | 0% (resting) | 100% parked |
-| 0.62 | -100% | -30% leaving | 100% parked |
-| 0.76 | -100% | -100% gone | 100% parked |
-| 0.88 | -100% | -100% | 38% arriving |
-| 0.96 – 1 | -100% | -100% | 0% (resting) |
+| 0 – 0.12 | 0% resting | 100% parked | 100% parked |
+| 0.20 | -54% leaving | 100% parked | 100% parked |
+| 0.30 | -100% gone | 75% arriving | 100% parked |
+| 0.42 – 0.55 | -100% | **0% resting** | 100% parked |
+| 0.62 | -100% | -41% leaving | 100% parked |
+| 0.72 | -100% | -100% gone | 88% arriving |
+| 0.90 – 1 | -100% | -100% | **0% resting** |
 
 Never more than one pane in motion at a time.
 
-#### `leadHold`
+#### Every pane gets a real stop
 
-The first pane rests for `leadHold` (default `0.12`) of the runway before it
-starts leaving. Without it the opening copy begins sliding out the instant the
-frame pins — it finishes rising into place and immediately leaves, so it never
-rests anywhere readable. The remaining cycles are squeezed into the leftover
-runway, so the handoff structure is unchanged.
+Rests used to be derived from the tail of each handoff window — whatever was
+left after `paneSettledAt`. That gave the first pane a decent hold but left the
+middle ones with about 18vh, so they slid in and kept going and you could scroll
+straight past them without the text ever settling.
+
+`scrollPerHold` now buys each pane an explicit rest phase of its own:
+
+| pane | rest |
+| --- | --- |
+| intro | 70vh |
+| what we do | 88vh |
+| work | 88vh |
+
+The middle and last panes get a little more than `scrollPerHold` because the
+tail of the handoff that delivers them — the `1 - paneSettledAt` remainder — is
+also time at rest. The first pane has no arriving handoff, so it gets exactly
+its hold.
 
 #### Pacing knobs
 
-All props: `squaresSlice` (0.3), `scrollPerHandoff` (200vh each, so total stage
-height is `100 + (panes-1) * 200` vh), `handoffMidpoint` (0.45),
-`paneSettledAt` (0.9), `leadHold` (0.12), `ease`.
+All props: `squaresSlice` (0.3), `scrollPerHandoff` (180vh), `scrollPerHold`
+(70vh), `handoffMidpoint` (0.45), `paneSettledAt` (0.9), `ease`.
+
+Total stage height is `100vh + (panes x scrollPerHold) + ((panes - 1) x
+scrollPerHandoff)` — 670vh for the current three. Adding holds made the page
+taller; trim `scrollPerHandoff` if it feels long.
 
 **On `ease`:** it defaults to linear on purpose. framer-motion applies easing
 per keyframe *segment*, not across the whole range, so an aggressive ease-out
