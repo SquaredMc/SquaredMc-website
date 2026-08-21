@@ -9,11 +9,17 @@
  * Every physics constant and animation timing below is the tuned Framer value —
  * see README "Open TODOs" before changing any of them.
  *
- * ONE DELIBERATE CHANGE FROM THE FRAMER SOURCE: the logo border was a single
- * static SVG fill path there, so the cursor couldn't disturb it. It's now 116
- * individual 10-unit blocks sharing the letters' spring physics — see
- * BORDER_BLOCKS below. The boot sequence is untouched; the blocks fade in on
- * exactly the same `_bfill_` timing the solid path used.
+ * DELIBERATE CHANGES FROM THE FRAMER SOURCE:
+ * - The logo border was a single static SVG fill path there, so the cursor
+ *   couldn't disturb it. It's now individual blocks sharing the letters'
+ *   spring physics — see BORDER_BLOCKS below. The boot sequence is untouched;
+ *   the blocks fade in on exactly the `_bfill_` timing the solid path used.
+ * - Both the letters and the border render at BLOCK_UNIT rather than the
+ *   authored 10-unit grid, so the logo is built from finer pieces without
+ *   looking any different at rest — see the "Logo block grid" section.
+ * - Every block carries a small BLOCK_BLEED outset so neighbours overlap;
+ *   without it the seams between blocks read as a grid of thin dark lines.
+ * - The logo's outer glow (a three-layer white box-shadow) has been removed.
  *
  * NOTE ON THE FILENAME: in Framer this file existed under two spellings at
  * different points (`SquaredMcIntroHero.tsx` and `SquareMcIntroHero.tsx`,
@@ -231,57 +237,104 @@ function insetToSvgRect(inset: string): SvgRect {
         h: ((100 - bottom - top) / 100) * 300,
     }
 }
-const PIXEL_LIST: SvgRect[] = LETTER_DATA.flatMap((l) =>
+// Authored letter glyphs: 100 blocks on a 10-unit grid.
+const LETTER_RECTS: SvgRect[] = LETTER_DATA.flatMap((l) =>
     l.squares.map(insetToSvgRect)
 )
 
-// ── Border blocks ────────────────────────────────────────────────────────────
-// BORDER_PATH is a 300×300 square minus a 280×280 inner square (evenodd), i.e.
-// a 10-unit-thick frame. Rebuilt here as individual 10-unit blocks on the same
-// grid the letters sit on, so the cursor can push them with the exact same
-// spring physics — one static shape can't be pushed apart.
+// ── Logo block grid ──────────────────────────────────────────────────────────
+// Both the letter glyphs and the border frame were authored on a 10-unit grid.
+// Rendering at BLOCK_UNIT splits every authored block into a cluster of
+// smaller ones: at 5 that is a 2x2 per authored block, so the logo looks
+// identical but is built from 4x as many independently-pushable pieces, and
+// the cursor distortion gets correspondingly finer-grained.
 //
-//   30 across the top + 30 across the bottom + 28 down each side = 116 blocks.
+// Note this is a 2D subdivision — halving the unit quadruples the count, it
+// does not double it. 100 letter + 116 border blocks at 10 units become 400 +
+// 464 at 5 units.
+const BLOCK_UNIT = 5
+
+// Every block is drawn slightly larger than its cell so neighbours overlap a
+// hair at rest. Without this, abutting rects show faint antialiasing seams —
+// visible as a grid of thin dark lines across the letters and border where
+// solid white is intended. Symmetric, so each block's centre — and therefore
+// its physics — is unaffected.
+const BLOCK_BLEED = 0.25
+
+function bleed(r: SvgRect): SvgRect {
+    return {
+        x: r.x - BLOCK_BLEED,
+        y: r.y - BLOCK_BLEED,
+        w: r.w + BLOCK_BLEED * 2,
+        h: r.h + BLOCK_BLEED * 2,
+    }
+}
+
+/** Split an authored rect into a grid of BLOCK_UNIT-sized bled blocks. */
+function subdivide(r: SvgRect): SvgRect[] {
+    const cols = Math.max(1, Math.round(r.w / BLOCK_UNIT))
+    const rows = Math.max(1, Math.round(r.h / BLOCK_UNIT))
+    const cw = r.w / cols
+    const ch = r.h / rows
+    const out: SvgRect[] = []
+    for (let row = 0; row < rows; row++) {
+        for (let col = 0; col < cols; col++) {
+            out.push(
+                bleed({ x: r.x + col * cw, y: r.y + row * ch, w: cw, h: ch })
+            )
+        }
+    }
+    return out
+}
+
+// Letter blocks, each tagged with the authored pixel it came from. The boot
+// cascade animates per AUTHORED pixel, not per sub-block, so subdividing
+// doesn't change how the letters read as they appear — all 4 pieces of one
+// authored pixel still fade in together.
+type LetterBlock = SvgRect & { parent: number }
+const LETTER_BLOCKS: LetterBlock[] = LETTER_RECTS.flatMap((r, parent) =>
+    subdivide(r).map((b) => ({ ...b, parent }))
+)
+
+// ── Border blocks ────────────────────────────────────────────────────────────
+// BORDER_PATH is a 300x300 square minus a 280x280 inner square (evenodd), i.e.
+// a 10-unit-thick frame. Rebuilt here as individual blocks on the same grid
+// the letters sit on, so the cursor can push them with the exact same spring
+// physics — one static shape can't be pushed apart.
 //
 // The blocks REPLACE the solid fill path only. The clockwise draw-in wipe is
 // still the stroked paths (_bm_ / _bfl*_), so the boot sequence is unchanged:
 // the blocks fade in on the same _bfill_ timing the solid path used to.
-const BORDER_BLOCK = 10
-
-// Rects are drawn very slightly larger than their grid cell so neighbours
-// overlap a hair at rest. Without this, 116 abutting rects show faint
-// antialiasing seams where the old single path was solid. Symmetric, so each
-// block's centre — and therefore its physics — is unaffected.
-const BORDER_BLEED = 0.25
+const BORDER_THICKNESS = 10
 
 const BORDER_BLOCKS: SvgRect[] = (() => {
     const blocks: SvgRect[] = []
-    const n = 300 / BORDER_BLOCK // 30 cells per side
-    const cell = (x: number, y: number): SvgRect => ({
-        x: x - BORDER_BLEED,
-        y: y - BORDER_BLEED,
-        w: BORDER_BLOCK + BORDER_BLEED * 2,
-        h: BORDER_BLOCK + BORDER_BLEED * 2,
-    })
-
-    for (let i = 0; i < n; i++) {
-        blocks.push(cell(i * BORDER_BLOCK, 0)) // top edge
-        blocks.push(cell(i * BORDER_BLOCK, 300 - BORDER_BLOCK)) // bottom edge
-    }
-    // Sides skip the first and last row — the corners belong to top/bottom.
-    for (let j = 1; j < n - 1; j++) {
-        blocks.push(cell(0, j * BORDER_BLOCK)) // left edge
-        blocks.push(cell(300 - BORDER_BLOCK, j * BORDER_BLOCK)) // right edge
+    const n = 300 / BLOCK_UNIT // cells per side
+    const t = BORDER_THICKNESS / BLOCK_UNIT // cells of frame thickness
+    for (let row = 0; row < n; row++) {
+        for (let col = 0; col < n; col++) {
+            const onFrame =
+                row < t || row >= n - t || col < t || col >= n - t
+            if (!onFrame) continue
+            blocks.push(
+                bleed({
+                    x: col * BLOCK_UNIT,
+                    y: row * BLOCK_UNIT,
+                    w: BLOCK_UNIT,
+                    h: BLOCK_UNIT,
+                })
+            )
+        }
     }
     return blocks
 })()
 
 // Letters and border blocks share ONE physics list, one offsets array and one
 // integration loop, so they are pushed and spring back identically. Letters
-// occupy indices [0, PIXEL_LIST.length) and border blocks the rest — that
+// occupy indices [0, LETTER_BLOCKS.length) and border blocks the rest — that
 // split is what the two render passes below index into.
-const PHYS_LIST: SvgRect[] = [...PIXEL_LIST, ...BORDER_BLOCKS]
-const BORDER_OFFSET = PIXEL_LIST.length
+const PHYS_LIST: SvgRect[] = [...LETTER_BLOCKS, ...BORDER_BLOCKS]
+const BORDER_OFFSET = LETTER_BLOCKS.length
 
 // ── Timing ───────────────────────────────────────────────────────────────────
 const LETTERS_START = BDR * 0.56
@@ -689,7 +742,7 @@ export default function SquaredMcIntroHero({
 
     // ── Letter appear delays (computed once on mount — no replay interaction) ─
     const delays = useMemo(() => {
-        return PIXEL_LIST.map(() => {
+        return LETTER_RECTS.map(() => {
             const base = LETTERS_START + Math.random() * LETTER_SPREAD
             return base + Math.random() * BLOCK_EXTRA
         })
@@ -865,8 +918,6 @@ export default function SquaredMcIntroHero({
                         width: "100%",
                         height: "100%",
                         backgroundColor: "#000",
-                        boxShadow:
-                            "0 0 60px 20px rgba(255,255,255,0.09), 0 0 160px 60px rgba(255,255,255,0.05), 0 0 300px 100px rgba(255,255,255,0.025)",
                         transformOrigin: "center center",
                         // Opacity reaches 1 quickly (LOGO_FADE_DUR) so the logo visibly
                         // "appears" well before the slower scale settle / border draw /
@@ -935,7 +986,7 @@ export default function SquaredMcIntroHero({
                                 ))}
                             </>
                         )}
-                        {PIXEL_LIST.map((r, idx) => (
+                        {LETTER_BLOCKS.map((r, idx) => (
                             <rect
                                 key={idx}
                                 ref={(el) => {
@@ -950,7 +1001,7 @@ export default function SquaredMcIntroHero({
                                     opacity: prefersReducedMotion ? 1 : 0,
                                     animation: prefersReducedMotion
                                         ? undefined
-                                        : `_sqapp ${BLOCK_DUR}s ease-out ${(delays[idx] ?? LETTERS_START).toFixed(3)}s both`,
+                                        : `_sqapp ${BLOCK_DUR}s ease-out ${(delays[r.parent] ?? LETTERS_START).toFixed(3)}s both`,
                                 }}
                             />
                         ))}

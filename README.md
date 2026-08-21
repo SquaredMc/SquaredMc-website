@@ -48,9 +48,11 @@ It covers: the logo intro-draw (border wipe → letter-pixel cascade), the curso
 72 floating background squares with cursor-push physics, and the scroll-driven
 shrink of the logo into a sticky header mark.
 
-One deliberate change from the Framer source: the border is now made of
-pushable blocks rather than a static path — see
-[Interactive logo border](#interactive-logo-border).
+Deliberate changes from the Framer source: the border is now made of pushable
+blocks rather than a static path, both letters and border render on a finer
+block grid, every block carries a bleed so the seams between blocks don't show,
+and the logo's outer glow (a three-layer white `box-shadow`) has been removed —
+see [The logo block grid](#the-logo-block-grid).
 
 Two things worth knowing:
 
@@ -168,27 +170,53 @@ var from the workflow so assets resolve from the root again.
   `0.04–0.52` — which let the colored squares read noticeably hotter than the
   white ones. Square counts are unchanged at 42 white / 30 colored.
 
-## Interactive logo border
+## The logo block grid
+
+Both the letter glyphs and the border frame were authored on a **10-unit grid**
+(the glyph inset percentages step in 3.33% of the 300-unit viewBox, and the
+frame is a 300x300 square minus a 280x280 one). They're rendered at
+`BLOCK_UNIT`, currently **5**, which splits every authored block into a 2x2
+cluster:
+
+| | authored (10 units) | rendered (`BLOCK_UNIT` = 5) |
+| --- | --- | --- |
+| Letters | 100 blocks | 400 blocks |
+| Border | 116 blocks | 464 blocks |
+| **Total** | **216** | **864** |
+
+The logo is pixel-identical at rest — the subdivision only buys finer-grained
+cursor distortion. Note this is a 2D subdivision: halving `BLOCK_UNIT`
+**quadruples** the block count, it doesn't double it. Measured cost of writing
+all 864 transforms is ~0.5ms per frame, well inside a 16ms budget, but that
+scaling is worth remembering before going to 2.5.
+
+### Cursor interaction
 
 The border was a single static SVG fill path in the Framer source, so the
-cursor passed straight through it while the letters reacted. It's now built
-from **116 individual 10-unit blocks** on the same grid the letters sit on:
-30 across the top, 30 across the bottom, and 28 down each side.
+cursor passed straight through it while the letters reacted. Letters and border
+blocks now share one physics list (`PHYS_LIST`), one offsets array and one
+integration loop, so they're pushed and spring back identically — same
+`PIX_PUSH_RADIUS` / `PIX_PUSH_FORCE` / `PIX_SPRING_K` / `PIX_DAMP` constants,
+no separate tuning.
 
-Letters and border blocks share one physics list (`PHYS_LIST`), one offsets
-array and one integration loop, so they're pushed and spring back identically —
-same `PIX_PUSH_RADIUS` / `PIX_PUSH_FORCE` / `PIX_SPRING_K` / `PIX_DAMP`
-constants, no separate tuning.
+### Seams
 
-The boot sequence is unchanged. The clockwise draw-in wipe is still the stroked
-paths (`_bm_` / `_bfl*_`); only the solid fill was replaced, and the blocks fade
-in on exactly the `_bfill_` timing that path used.
+Every block is drawn `BLOCK_BLEED` (0.25 units) larger than its cell in every
+direction, so neighbours overlap by 0.5 units at rest. Without it, abutting
+rects show faint antialiasing seams — a grid of thin dark lines across the
+letters and border where solid white is intended. The bleed is symmetric, so
+block centres, and therefore the physics, are unaffected.
 
-One rendering detail: each block is drawn `BORDER_BLEED` (0.25 units) larger
-than its cell in every direction, so neighbours overlap by 0.5 units at rest.
-Without it, 116 abutting rects show faint antialiasing seams where the old
-single path was solid. The bleed is symmetric, so block centres — and therefore
-the physics — are unaffected.
+### Boot sequence
+
+Unchanged by any of the above. The clockwise draw-in wipe is still the stroked
+paths (`_bm_` / `_bfl*_`); only the solid fill was replaced, and the border
+blocks fade in on exactly the `_bfill_` timing that path used.
+
+The letter cascade animates per **authored** pixel, not per sub-block — each
+block carries a `parent` index and looks up its delay from that, so all four
+pieces of an authored pixel still appear together. Subdividing therefore
+doesn't change how the letters read as they draw in.
 
 The small 44px header mark still uses the static `BORDER_PATH`; it isn't
-interactive and doesn't need 116 nodes.
+interactive and doesn't need 864 nodes.
