@@ -30,8 +30,8 @@ src/
   index.css                        reset + work-rail scrollbar
   components/
     SquaredMcIntroHero.tsx         animated hero (ported from Framer)
-    HeroCopy.tsx                   plain marketing copy below the hero
-    ScrollHandoffSection.tsx       scroll-pinned sequential handoff
+    HeroCopy.tsx                   opening marketing copy (first stage pane)
+    ScrollHandoffSection.tsx       pinned stage, horizontal pane handoff
 ```
 
 ### `SquaredMcIntroHero.tsx`
@@ -70,38 +70,80 @@ it needs real content below it to scroll through. `HeroCopy` and
 
 ### `ScrollHandoffSection.tsx`
 
-The piece Framer's native per-layer Scroll Animation panel couldn't do. In that
-panel every layer's animation runs across the *entire* scroll range
-independently, so outgoing and incoming content always animate at the same
-time. There's no way to window one layer to the first half of the range and the
-other to the second half.
+The pinned content stage. **Every text block on the page lives in here and hands
+off horizontally — nothing scrolls vertically past anything else.** `App.tsx`
+passes it an ordered `panes` array; it currently holds the opening copy
+(`HeroCopy`), a "What we do" `TextPane`, and the `WorkPane` cards.
 
-Here both panes read the same `scrollYProgress` and each maps it through its own
-keyframe windows, so the handoff is genuinely sequential:
+#### The squares slice
 
-```
-progress   0 ─────────── 0.45 ─────────── 0.9 ──── 1
-intro x    0% ────────► -100% ──── (parked off-screen left) ────►
-work  x    (parked off-screen right) ──── 100% ────────► 0% ────►
-```
+The stage's content panel starts `squaresSlice` (default `0.3`) down the
+viewport and the shell paints no background of its own, so the top 30% is never
+covered and the hero's floating squares stay visible — and pushable — for the
+whole page.
 
-Measured in the browser to confirm there's no overlap:
+`App.tsx` owns the fraction as a single `SQUARES_SLICE` constant and passes it to
+**both** components: the stage won't paint over that strip, and the hero's
+`squaresCompressTo` confines the squares to exactly it. They have to match, so
+change it in one place.
 
-| progress | intro pane | work pane |
-| --- | --- | --- |
-| 0.22 | `translateX(-48.9%)` | `translateX(100%)` — parked |
-| 0.44 | `translateX(-97.8%)` | `translateX(100%)` — still parked |
-| 0.68 | `translateX(-100%)` — parked | `translateX(48.9%)` — entering |
-| 0.92 | `translateX(-100%)` — parked | settled at 0 |
+The "scroll stops at 70vh" behaviour falls out of the sticky mechanics rather
+than any scroll maths — the panel rides up with the page until the frame pins at
+`top: 0`, at which point its top edge is at 30vh and it goes no further:
 
-Pacing knobs are all props — `scrollDistance` (default `300vh`),
-`handoffMidpoint` (`0.45`), `workSettledAt` (`0.9`), `ease`.
+| scrollY | panel top |
+| --- | --- |
+| 0 | 130vh |
+| 360 | 80vh |
+| 720 | **30vh — pinned** |
+| 2000 | 30vh |
+| 3600 | 30vh |
+
+#### Sequential handoff
+
+This is the thing Framer's per-layer Scroll Animation panel couldn't do. There,
+every layer's animation runs across the *entire* scroll range independently, so
+outgoing and incoming content always moved together. Here every pane reads the
+same `scrollYProgress` and maps it through its own keyframe window.
+
+Progress splits into (paneCount - 1) equal cycles, one per handoff. Within a
+cycle the outgoing pane exits by `handoffMidpoint` and the incoming one arrives
+between `handoffMidpoint` and `paneSettledAt`. Measured from the real
+`paneKeyframes` output for the current 3 panes:
+
+| progress | intro | what we do | work |
+| --- | --- | --- | --- |
+| 0 – 0.12 | 0% (resting) | 100% parked | 100% parked |
+| 0.20 | -40% leaving | 100% parked | 100% parked |
+| 0.32 | -100% gone | 100% parked | 100% parked |
+| 0.44 | -100% | 38% arriving | 100% parked |
+| 0.52 | -100% | 0% (resting) | 100% parked |
+| 0.62 | -100% | -30% leaving | 100% parked |
+| 0.76 | -100% | -100% gone | 100% parked |
+| 0.88 | -100% | -100% | 38% arriving |
+| 0.96 – 1 | -100% | -100% | 0% (resting) |
+
+Never more than one pane in motion at a time.
+
+#### `leadHold`
+
+The first pane rests for `leadHold` (default `0.12`) of the runway before it
+starts leaving. Without it the opening copy begins sliding out the instant the
+frame pins — it finishes rising into place and immediately leaves, so it never
+rests anywhere readable. The remaining cycles are squeezed into the leftover
+runway, so the handoff structure is unchanged.
+
+#### Pacing knobs
+
+All props: `squaresSlice` (0.3), `scrollPerHandoff` (200vh each, so total stage
+height is `100 + (panes-1) * 200` vh), `handoffMidpoint` (0.45),
+`paneSettledAt` (0.9), `leadHold` (0.12), `ease`.
 
 **On `ease`:** it defaults to linear on purpose. framer-motion applies easing
 per keyframe *segment*, not across the whole range, so an aggressive ease-out
-like `[0.16, 1, 0.3, 1]` is ~95% complete a fifth of the way in — the intro
-visually finishes leaving long before the 0.45 midpoint and the rest of that
-window becomes dead scroll. Keep any easing gentle.
+like `[0.16, 1, 0.3, 1]` is ~95% complete a fifth of the way through a cycle —
+the outgoing pane visually finishes leaving long before the midpoint and the
+rest of that window becomes dead scroll. Keep any easing gentle.
 
 ## Reduced motion
 

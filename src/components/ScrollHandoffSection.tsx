@@ -1,47 +1,78 @@
 /**
  * ScrollHandoffSection.tsx
  *
- * The piece Framer's native per-layer Scroll Animation panel couldn't do:
- * a true SEQUENTIAL handoff. In that panel each layer's animation runs across
- * the entire scroll range independently, so the outgoing and incoming content
- * always animate at the same time — there's no way to window one layer to the
- * first half of the range and the other to the second half.
+ * The pinned content stage. Every text block on the page lives in here and
+ * hands off HORIZONTALLY — nothing scrolls vertically past another block.
  *
- * Here both layers read the same `scrollYProgress` and each maps it through
- * its own keyframe windows, so the intro is guaranteed to be fully gone before
- * the work content starts entering.
+ * TWO THINGS THIS SOLVES
  *
- *   progress   0 ─────────── 0.45 ─────────── 0.9 ──── 1
- *   intro x    0% ────────► -100% ───── (parked off-screen left) ─────►
- *   work  x    (parked off-screen right) ──── 100% ────────► 0% ──────►
+ * 1. The squares slice. The stage's content panel starts `squaresSlice` down
+ *    the viewport, so the top strip is never painted over and the hero's
+ *    floating squares stay visible — and pushable — for the whole page. The
+ *    hero's own `squaresCompressTo` should be given the SAME fraction so the
+ *    squares are confined to exactly the strip that stays uncovered.
  *
- * Structure: an outer spacer with a real height (scrollDistance, default
- * 300vh) provides the scroll runway; inside it a `position: sticky; top: 0;
- * height: 100vh` frame stays pinned while that runway scrolls past.
+ *    The "scroll stops at 70vh" behaviour falls out of the sticky mechanics on
+ *    its own: the panel rides up with the page until the frame pins at top: 0,
+ *    at which point the panel's top edge is sitting at `squaresSlice` and goes
+ *    no further. From then on scroll drives horizontal handoffs instead.
  *
- * PACING KNOBS — all props, so you can retune without touching the animation
- * logic: scrollDistance, handoffMidpoint, workSettledAt, ease.
+ * 2. True SEQUENTIAL handoff — the thing Framer's per-layer Scroll Animation
+ *    panel couldn't do. There, every layer's animation runs across the entire
+ *    scroll range independently, so outgoing and incoming content always moved
+ *    at the same time. Here every pane reads the same `scrollYProgress` and
+ *    maps it through its own keyframe window, so a pane is guaranteed to be
+ *    fully gone before the next one starts arriving.
+ *
+ * THE HANDOFF WINDOWS
+ *
+ * Progress 0..1 is split into (paneCount - 1) equal cycles, one per handoff.
+ * Within each cycle the outgoing pane exits by `handoffMidpoint` and the
+ * incoming pane arrives between `handoffMidpoint` and `paneSettledAt`:
+ *
+ *   cycle    0 ─────────── 0.45 ─────────── 0.9 ──── 1
+ *   outgoing 0% ────────► -100% ──── (parked off-screen left) ────►
+ *   incoming (parked off-screen right) ──── 100% ────────► 0% ────►
+ *
+ * PACING KNOBS — all props, so pacing is tunable without touching the
+ * animation logic: scrollPerHandoff, handoffMidpoint, paneSettledAt, ease.
  */
 
-import { useRef, type CSSProperties } from "react"
+import { useRef, type CSSProperties, type ReactNode } from "react"
+import {
+    paneKeyframes,
+    PLACEHOLDER_WORK,
+    type BezierEase,
+    type WorkItem,
+} from "../lib/handoff"
 import {
     motion,
     useScroll,
     useTransform,
     useReducedMotion,
     cubicBezier,
+    type MotionValue,
 } from "framer-motion"
 
-/** A cubic-bezier control-point tuple, e.g. [0.16, 1, 0.3, 1]. */
-export type BezierEase = [number, number, number, number]
-
 // ── Defaults (tune these, not the transforms below) ──────────────────────────
-/** How much scroll runway the pinned section gets. More = slower, longer handoff. */
-const SCROLL_DISTANCE = "300vh"
-/** Progress point where the intro has finished exiting AND the work starts entering. */
+/** Fraction of viewport height left clear at the top for the hero squares. */
+const SQUARES_SLICE = 0.3
+/** Scroll runway per handoff, in vh. More = slower, longer handoffs. */
+const SCROLL_PER_HANDOFF = 200
+/** Point within a cycle where the outgoing pane is gone and the next starts. */
 const HANDOFF_MIDPOINT = 0.45
-/** Progress point where the work content has finished entering (it holds from here to 1). */
-const WORK_SETTLED_AT = 0.9
+/** Point within a cycle where the incoming pane has fully arrived. */
+const PANE_SETTLED_AT = 0.9
+/**
+ * Fraction of the runway the FIRST pane holds still before it starts leaving.
+ *
+ * Without this the opening copy begins sliding out the instant the frame pins,
+ * so it never rests anywhere readable — it finishes rising into place and
+ * immediately leaves. The lead-in gives it a beat at rest first. Every cycle
+ * below is squeezed into the remaining (1 - lead) of the runway, so the
+ * handoff structure itself is unchanged.
+ */
+const LEAD_HOLD = 0.12
 /**
  * Easing applied within each keyframe segment. Default is undefined = linear,
  * i.e. the slide tracks the wheel 1:1, which is what a scrubbed animation
@@ -49,76 +80,58 @@ const WORK_SETTLED_AT = 0.9
  *
  * Careful with this one: the easing is applied per SEGMENT, not across the
  * whole range. An aggressive ease-out like [0.16, 1, 0.3, 1] is ~95% complete
- * a fifth of the way through the section, so the intro would visually finish
- * leaving long before the 0.45 midpoint and the rest of that window would be
+ * a fifth of the way through a cycle, so the outgoing pane would visually
+ * finish leaving long before the midpoint and the rest of that window would be
  * dead scroll. Keep it gentle (e.g. [0.4, 0, 0.6, 1]) if you add one.
  */
 const EASE: BezierEase | undefined = undefined
 
-export interface WorkItem {
-    /** Small index/eyebrow shown above the title, e.g. "01". */
-    index: string
-    title: string
-    blurb: string
-    tag: string
-}
-
-/** Placeholder cards — swap for real case studies. See README "Open TODOs". */
-const PLACEHOLDER_WORK: WorkItem[] = [
-    {
-        index: "01",
-        title: "Project One",
-        blurb: "Placeholder card. Real case-study content still to come.",
-        tag: "Product",
-    },
-    {
-        index: "02",
-        title: "Project Two",
-        blurb: "Placeholder card. Real case-study content still to come.",
-        tag: "iOS",
-    },
-    {
-        index: "03",
-        title: "Project Three",
-        blurb: "Placeholder card. Real case-study content still to come.",
-        tag: "Design System",
-    },
-    {
-        index: "04",
-        title: "Project Four",
-        blurb: "Placeholder card. Real case-study content still to come.",
-        tag: "Web",
-    },
-]
-
 export interface ScrollHandoffSectionProps {
-    introLabel?: string
-    introHeading?: string
-    introParagraph?: string
-    workLabel?: string
-    workItems?: WorkItem[]
-    /** Height of the outer spacer — the scroll runway. Default "300vh". */
-    scrollDistance?: string
-    /** Progress (0–1) at which the intro is fully gone and the work begins entering. Default 0.45. */
+    /** The content panes, in order. Each fills the panel and slides in turn. */
+    panes: ReactNode[]
+    /** Fraction of viewport height kept clear at the top. Default 0.3. */
+    squaresSlice?: number
+    /** Scroll runway per handoff, in vh. Default 200. */
+    scrollPerHandoff?: number
+    /** Point in a cycle (0-1) where the outgoing pane is gone. Default 0.45. */
     handoffMidpoint?: number
-    /** Progress (0–1) at which the work has fully arrived. Default 0.9. */
-    workSettledAt?: number
-    /**
-     * Easing curve for both slides, as cubic-bezier control points. Omit for
-     * linear (the default) — see the note on EASE above before setting this.
-     */
+    /** Point in a cycle (0-1) where the incoming pane has arrived. Default 0.9. */
+    paneSettledAt?: number
+    /** Fraction of runway the first pane rests before leaving. Default 0.12. */
+    leadHold?: number
+    /** Easing curve. Omit for linear — see the note on EASE above. */
     ease?: BezierEase
 }
 
+/**
+ * One pane. This is a component rather than inline JSX so that useTransform is
+ * called once per pane instance — calling it in a .map() would break the rules
+ * of hooks the moment the pane count changed.
+ */
+function Pane({
+    progress,
+    input,
+    output,
+    ease,
+    children,
+}: {
+    progress: MotionValue<number>
+    input: number[]
+    output: string[]
+    ease?: (t: number) => number
+    children: ReactNode
+}) {
+    const x = useTransform(progress, input, output, ease ? { ease } : undefined)
+    return <motion.div style={{ ...paneStyle, x }}>{children}</motion.div>
+}
+
 export default function ScrollHandoffSection({
-    introLabel = "What we do",
-    introHeading = "We build the version we wish existed.",
-    introParagraph = "Every project starts the same way — something we use every day gets in its own way, and nobody has fixed it properly. So we do.",
-    workLabel = "Selected work",
-    workItems = PLACEHOLDER_WORK,
-    scrollDistance = SCROLL_DISTANCE,
+    panes,
+    squaresSlice = SQUARES_SLICE,
+    scrollPerHandoff = SCROLL_PER_HANDOFF,
     handoffMidpoint = HANDOFF_MIDPOINT,
-    workSettledAt = WORK_SETTLED_AT,
+    paneSettledAt = PANE_SETTLED_AT,
+    leadHold = LEAD_HOLD,
     ease = EASE,
 }: ScrollHandoffSectionProps) {
     const containerRef = useRef<HTMLDivElement>(null)
@@ -131,73 +144,85 @@ export default function ScrollHandoffSection({
 
     const easeFn = ease ? cubicBezier(...ease) : undefined
 
-    // Intro copy: exits left, fully gone by the midpoint, then stays gone.
-    const introX = useTransform(
-        scrollYProgress,
-        [0, handoffMidpoint, 1],
-        ["0%", "-100%", "-100%"],
-        { ease: easeFn }
-    )
-
-    // Work content: parked off-screen right until the midpoint, then enters.
-    const workX = useTransform(
-        scrollYProgress,
-        [0, handoffMidpoint, workSettledAt, 1],
-        ["100%", "100%", "0%", "0%"],
-        { ease: easeFn }
-    )
-
-    // Reduced motion: no pinning, no scrubbing — both blocks just stack and
-    // read as ordinary sections.
+    // Reduced motion: no pinning, no scrubbing, no squares slice to preserve —
+    // the panes just stack and read as ordinary sections.
     if (prefersReducedMotion) {
         return (
-            // The ref is still attached here even though nothing reads the
-            // scroll progress in this branch — useScroll was already called
-            // above and warns if its target ref never resolves to an element.
-            <div ref={containerRef} style={shell}>
-                <div style={{ ...pane, position: "relative", padding: "12vh 28px" }}>
-                    <IntroPane
-                        label={introLabel}
-                        heading={introHeading}
-                        paragraph={introParagraph}
-                    />
-                </div>
-                <div style={{ ...pane, position: "relative", padding: "12vh 28px" }}>
-                    <WorkPane label={workLabel} items={workItems} />
-                </div>
+            // The ref stays attached even though nothing reads the progress in
+            // this branch — useScroll was already called above and warns if its
+            // target ref never resolves to an element.
+            <div ref={containerRef} style={{ backgroundColor: "#000" }}>
+                {panes.map((p, i) => (
+                    <section
+                        key={i}
+                        style={{
+                            ...paneStyle,
+                            position: "relative",
+                            padding: "12vh 28px",
+                        }}
+                    >
+                        {p}
+                    </section>
+                ))}
             </div>
         )
     }
 
-    return (
-        <div ref={containerRef} style={{ ...shell, height: scrollDistance }}>
-            <div
-                style={{
-                    position: "sticky",
-                    top: 0,
-                    height: "100vh",
-                    overflow: "hidden",
-                }}
-            >
-                <motion.div style={{ ...pane, x: introX }}>
-                    <IntroPane
-                        label={introLabel}
-                        heading={introHeading}
-                        paragraph={introParagraph}
-                    />
-                </motion.div>
+    // 100vh for the frame itself, plus a runway per handoff. The frame pins for
+    // (height - 100vh), which is exactly the runway.
+    const height = `${100 + Math.max(1, panes.length - 1) * scrollPerHandoff}vh`
 
-                <motion.div style={{ ...pane, x: workX }}>
-                    <WorkPane label={workLabel} items={workItems} />
-                </motion.div>
+    return (
+        // No background on the shell — painting it here would cover the squares
+        // in the top slice. Only the content panel below is opaque.
+        <div ref={containerRef} style={{ position: "relative", height }}>
+            <div style={{ position: "sticky", top: 0, height: "100vh" }}>
+                {/* Content panel: starts `squaresSlice` down so the strip above
+                    it stays clear for the hero's floating squares. */}
+                <div
+                    style={{
+                        position: "absolute",
+                        top: `${squaresSlice * 100}%`,
+                        left: 0,
+                        right: 0,
+                        bottom: 0,
+                        zIndex: 30,
+                        backgroundColor: "#000",
+                        color: "#fff",
+                        overflow: "hidden",
+                        fontFamily:
+                            "'Space Grotesk', system-ui, sans-serif",
+                    }}
+                >
+                    {panes.map((p, i) => {
+                        const { input, output } = paneKeyframes(
+                            i,
+                            panes.length,
+                            handoffMidpoint,
+                            paneSettledAt,
+                            leadHold
+                        )
+                        return (
+                            <Pane
+                                key={i}
+                                progress={scrollYProgress}
+                                input={input}
+                                output={output}
+                                ease={easeFn}
+                            >
+                                {p}
+                            </Pane>
+                        )
+                    })}
+                </div>
             </div>
         </div>
     )
 }
 
-// ── Panes ────────────────────────────────────────────────────────────────────
+// ── Built-in panes ───────────────────────────────────────────────────────────
 
-function IntroPane({
+export function TextPane({
     label,
     heading,
     paragraph,
@@ -212,7 +237,7 @@ function IntroPane({
             <h2
                 style={{
                     margin: "24px 0 0",
-                    fontSize: "clamp(28px, 5vw, 54px)",
+                    fontSize: "clamp(26px, 4.4vw, 48px)",
                     lineHeight: 1.1,
                     letterSpacing: "-0.02em",
                     fontWeight: 500,
@@ -222,10 +247,10 @@ function IntroPane({
             </h2>
             <p
                 style={{
-                    margin: "28px 0 0",
+                    margin: "24px 0 0",
                     maxWidth: 560,
                     fontSize: "clamp(15px, 2vw, 18px)",
-                    lineHeight: 1.65,
+                    lineHeight: 1.6,
                     color: "rgba(255,255,255,0.62)",
                 }}
             >
@@ -235,7 +260,13 @@ function IntroPane({
     )
 }
 
-function WorkPane({ label, items }: { label: string; items: WorkItem[] }) {
+export function WorkPane({
+    label = "Selected work",
+    items = PLACEHOLDER_WORK,
+}: {
+    label?: string
+    items?: WorkItem[]
+}) {
     return (
         <div style={{ width: "100%", maxWidth: 1180, margin: "0 auto" }}>
             <p style={eyebrow}>{label}</p>
@@ -244,7 +275,7 @@ function WorkPane({ label, items }: { label: string; items: WorkItem[] }) {
                 style={{
                     display: "flex",
                     gap: 20,
-                    marginTop: 32,
+                    marginTop: 28,
                     overflowX: "auto",
                     paddingBottom: 12,
                 }}
@@ -253,10 +284,10 @@ function WorkPane({ label, items }: { label: string; items: WorkItem[] }) {
                     <article
                         key={item.index}
                         style={{
-                            flex: "0 0 clamp(220px, 26vw, 280px)",
-                            minHeight: 320,
+                            flex: "0 0 clamp(210px, 24vw, 270px)",
+                            minHeight: 280,
                             border: "1px solid rgba(255,255,255,0.14)",
-                            padding: 24,
+                            padding: 22,
                             display: "flex",
                             flexDirection: "column",
                             gap: 12,
@@ -274,7 +305,7 @@ function WorkPane({ label, items }: { label: string; items: WorkItem[] }) {
                         <h3
                             style={{
                                 margin: 0,
-                                fontSize: 22,
+                                fontSize: 21,
                                 fontWeight: 500,
                                 letterSpacing: "-0.01em",
                             }}
@@ -311,18 +342,10 @@ function WorkPane({ label, items }: { label: string; items: WorkItem[] }) {
 
 // ── Shared style objects ─────────────────────────────────────────────────────
 
-const shell: CSSProperties = {
-    position: "relative",
-    zIndex: 30,
-    backgroundColor: "#000",
-    color: "#fff",
-    fontFamily: "'Space Grotesk', system-ui, sans-serif",
-}
-
 // `rotate`/`scale`/`translate`/`transition` are omitted because framer-motion's
 // MotionStyle redefines them; spreading a plain CSSProperties that still
 // declares them into a motion.div's style fails to typecheck.
-const pane: Omit<
+const paneStyle: Omit<
     CSSProperties,
     "rotate" | "scale" | "translate" | "transition"
 > = {
