@@ -336,11 +336,68 @@ const BORDER_BLOCKS: SvgRect[] = (() => {
 const PHYS_LIST: SvgRect[] = [...LETTER_BLOCKS, ...BORDER_BLOCKS]
 const BORDER_OFFSET = LETTER_BLOCKS.length
 
-// ── Timing ───────────────────────────────────────────────────────────────────
-const LETTERS_START = BDR * 0.56
-const LETTER_SPREAD = 1.1
-const BLOCK_EXTRA = 0.45
-const BLOCK_DUR = 0.55
+// ── Letter cascade timing ────────────────────────────────────────────────────
+// The letters reveal in READING order of the 3x3 glyph grid:
+//
+//     S Q U
+//     A R E
+//     D M C
+//
+// LETTER_DATA is in authoring order (S E R C M D A U Q), so each letter's
+// position in the cascade is looked up by id rather than by array index.
+const LETTER_READING_ORDER = ["S", "Q", "U", "A", "R", "E", "D", "M", "C"]
+
+// When the cascade begins. The spec anchors this at 600ms because it assumes a
+// ~600ms border draw — i.e. "letters start once the border has finished". The
+// border here takes BDR (3.2s), so the anchor tracks BDR and the cascade
+// structure below is unaffected. Two alternatives, both one-line:
+//   0.6        — the spec's literal absolute times, letters start mid-draw
+//   BDR * 0.56 — the previous behaviour, letters overlap the border draw
+const LETTERS_START = BDR
+
+// Letter n starts LETTER_STAGGER after letter n-1 and takes LETTER_REVEAL to
+// complete, so consecutive letters overlap. With the spec's 0.6 anchor this
+// puts the last letter (C, n=8) at 0.6 + 8*0.1 = 1.4s, finishing at 1.65s,
+// which is the "~1650ms" the spec quotes.
+const LETTER_STAGGER = 0.1
+const LETTER_REVEAL = 0.25
+
+// A letter arrives as a block WIPE, not a smooth fade: its pixels snap on one
+// after another across the letter's LETTER_REVEAL window, each taking
+// BLOCK_DUR. Keep BLOCK_DUR well under LETTER_REVEAL or the pixels overlap so
+// heavily that the wipe reads as a fade again.
+const BLOCK_DUR = 0.09
+
+// Per-authored-pixel appear delay, index-aligned with LETTER_RECTS (both walk
+// LETTER_DATA in the same order). Fully deterministic — the cascade is a fixed
+// sweep now, not the random scatter it used to be.
+const LETTER_DELAYS: number[] = (() => {
+    const out: number[] = []
+    for (const letter of LETTER_DATA) {
+        const n = LETTER_READING_ORDER.indexOf(letter.id)
+        const start = LETTERS_START + n * LETTER_STAGGER
+        const rects = letter.squares.map(insetToSvgRect)
+
+        // Wipe order within a letter: raster — top row first, left to right.
+        const order = rects
+            .map((_, i) => i)
+            .sort(
+                (a, b) => rects[a].y - rects[b].y || rects[a].x - rects[b].x
+            )
+
+        const step =
+            order.length > 1
+                ? (LETTER_REVEAL - BLOCK_DUR) / (order.length - 1)
+                : 0
+
+        const local = new Array<number>(rects.length)
+        order.forEach((rectIdx, pos) => {
+            local[rectIdx] = start + pos * step
+        })
+        out.push(...local)
+    }
+    return out
+})()
 
 // Logo box reaches full opacity quickly, independent of the slower border
 // draw / letter cascade — so it visibly "appears" well before it's finished
@@ -740,14 +797,6 @@ export default function SquaredMcIntroHero({
         }
     }, [prefersReducedMotion])
 
-    // ── Letter appear delays (computed once on mount — no replay interaction) ─
-    const delays = useMemo(() => {
-        return LETTER_RECTS.map(() => {
-            const base = LETTERS_START + Math.random() * LETTER_SPREAD
-            return base + Math.random() * BLOCK_EXTRA
-        })
-    }, [])
-
     return (
         <div
             style={{
@@ -1003,7 +1052,7 @@ export default function SquaredMcIntroHero({
                                     opacity: prefersReducedMotion ? 1 : 0,
                                     animation: prefersReducedMotion
                                         ? undefined
-                                        : `_sqapp ${BLOCK_DUR}s ease-out ${(delays[r.parent] ?? LETTERS_START).toFixed(3)}s both`,
+                                        : `_sqapp ${BLOCK_DUR}s ease-out ${(LETTER_DELAYS[r.parent] ?? LETTERS_START).toFixed(3)}s both`,
                                 }}
                             />
                         ))}

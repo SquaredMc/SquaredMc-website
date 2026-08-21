@@ -157,18 +157,47 @@ var from the workflow so assets resolve from the root again.
 - **Nav link targets.** `navItems` in `App.tsx` currently points at `#work`,
   `#about`, `#contact`. Only `#work` resolves to a real element — About and
   Contact sections don't exist yet.
-- **One spec/source discrepancy is still left as the source has it:** the
-  **letter cascade** uses randomized per-pixel delays (`LETTERS_START +
-  random(1.1) + random(0.45)`), not the spec's fixed "250ms reveal, 100ms
-  stagger, letter *n* starts at 600 + n×100ms". Say the word and it's a quick
-  change.
+- **All three spec/source discrepancies are now resolved in favour of the
+  spec.** The border is pushable blocks rather than a static shape (see below),
+  the background squares share one opacity range (`SQUARE_OPACITY_MIN/MAX`,
+  `0.04–0.28`, previously white `0.04–0.35` and colored `0.04–0.52`), and the
+  letter cascade is a fixed reading-order sweep rather than a random scatter
+  (see below).
 
-  Two others have since been **resolved in favour of the spec**: the border is
-  now pushable blocks rather than a static shape (see below), and the
-  background squares now share one opacity range (`SQUARE_OPACITY_MIN/MAX`,
-  `0.04–0.28`). They previously differed — white `0.04–0.35`, colored
-  `0.04–0.52` — which let the colored squares read noticeably hotter than the
-  white ones. Square counts are unchanged at 42 white / 30 colored.
+## The letter cascade
+
+The letters reveal in reading order of the 3x3 grid — **S Q U / A R E / D M C**
+— not the authoring order `LETTER_DATA` happens to be in (S E R C M D A U Q).
+Each letter is looked up by id via `LETTER_READING_ORDER`.
+
+| | value |
+| --- | --- |
+| Stagger between letter starts | `LETTER_STAGGER` = 100ms |
+| Reveal window per letter | `LETTER_REVEAL` = 250ms |
+| Per-block snap | `BLOCK_DUR` = 90ms |
+| Total span | 1.05s |
+
+Consecutive letters overlap, since each takes 250ms but starts only 100ms after
+the last. Within a letter the pixels snap on one after another across the 250ms
+window in raster order (top row first, left to right) — that is the "pixel-block
+wipe, not a smooth fade" the spec asks for. Keep `BLOCK_DUR` well under
+`LETTER_REVEAL`, or the blocks overlap so heavily the wipe reads as a fade again.
+
+The whole thing is deterministic now. It used to be
+`LETTERS_START + random(1.1) + random(0.45)` per pixel, which scattered the
+letters in randomly with no reading order at all.
+
+### The anchor
+
+`LETTERS_START` is the one place this departs from the spec's literal numbers.
+The spec says letter *n* starts at `600 + n*100`ms, but 600ms is its assumed
+border-draw duration — it means "letters start once the border has finished".
+The border here takes `BDR` (3.2s), so the anchor tracks `BDR` and the cascade
+structure is unchanged; the last letter finishes 1.05s later, exactly as the
+spec's 1650ms figure implies. Two one-line alternatives are noted in the source:
+
+- `0.6` — the spec's literal absolute times, letters start mid-draw
+- `BDR * 0.56` — the previous behaviour, letters overlap the border draw
 
 ## The logo block grid
 
