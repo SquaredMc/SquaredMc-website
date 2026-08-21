@@ -909,7 +909,9 @@ export default function SquaredMcIntroHero({
                     height: "min(460px, 82vmin, 86vw)",
                     transform: "translate(-50%,-50%)",
                     zIndex: 20,
-                    cursor: "crosshair",
+                    // Plain arrow. Was "crosshair" in the Framer source; the
+                    // logo isn't clickable, so it gets no special affordance.
+                    cursor: "default",
                 }}
             >
                 <div
