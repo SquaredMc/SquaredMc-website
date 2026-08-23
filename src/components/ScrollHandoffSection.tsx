@@ -102,6 +102,16 @@ export interface ScrollHandoffSectionProps {
     paneSettledAt?: number
     /** Easing curve. Omit for linear — see the note on EASE above. */
     ease?: BezierEase
+    /**
+     * Optional anchor id per pane, index-aligned with `panes`.
+     *
+     * The panes live inside a pinned frame, so a normal `#id` on a pane would
+     * jump to the frame rather than to the scroll position where that pane is
+     * on screen. Instead the stage drops a zero-size anchor into the outer
+     * spacer at the scroll offset where the pane begins its rest, so `#id`
+     * lands with that pane settled.
+     */
+    paneAnchors?: (string | undefined)[]
 }
 
 /**
@@ -134,6 +144,7 @@ export default function ScrollHandoffSection({
     handoffMidpoint = HANDOFF_MIDPOINT,
     paneSettledAt = PANE_SETTLED_AT,
     ease = EASE,
+    paneAnchors,
 }: ScrollHandoffSectionProps) {
     const containerRef = useRef<HTMLDivElement>(null)
     const prefersReducedMotion = useReducedMotion()
@@ -164,6 +175,7 @@ export default function ScrollHandoffSection({
                 {panes.map((p, i) => (
                     <section
                         key={i}
+                        id={paneAnchors?.[i]}
                         style={{
                             ...paneStyle,
                             position: "relative",
@@ -191,6 +203,25 @@ export default function ScrollHandoffSection({
         // No background on the shell — painting it here would cover the squares
         // in the top slice. Only the content panel below is opaque.
         <div ref={containerRef} style={{ position: "relative", height }}>
+            {/* Scroll anchors. Pane i rests over
+                [i * (hold + handoff), + hold], so an anchor at the start of
+                that window scrolls to the pane fully settled. */}
+            {paneAnchors?.map((id, i) =>
+                id ? (
+                    <span
+                        key={id}
+                        id={id}
+                        aria-hidden="true"
+                        style={{
+                            position: "absolute",
+                            top: `${i * (scrollPerHold + scrollPerHandoff)}vh`,
+                            left: 0,
+                            width: 1,
+                            height: 1,
+                        }}
+                    />
+                ) : null
+            )}
             <div style={{ position: "sticky", top: 0, height: "100vh" }}>
                 {/* Content panel: starts `squaresSlice` down so the strip above
                     it stays clear for the hero's floating squares. */}
@@ -276,6 +307,66 @@ export function TextPane({
                     {paragraph}
                 </p>
             )}
+        </div>
+    )
+}
+
+/**
+ * Contact pane: a blurb plus the address as a real `mailto:` link, in the same
+ * heading type style as every other section.
+ */
+export function ContactPane({
+    label = "Contact",
+    heading = "Say hello.",
+    paragraph = "Got an everyday problem that off-the-shelf software gets wrong? Or just want to hear what we're building? Drop us a line — we read everything.",
+    email = "hello@squaredmc.com",
+}: {
+    label?: string
+    heading?: string
+    paragraph?: string
+    email?: string
+}) {
+    return (
+        <div style={{ maxWidth: 760, width: "100%", margin: "0 auto" }}>
+            <p style={eyebrow}>{label}</p>
+            <h2
+                style={{
+                    margin: "24px 0 0",
+                    fontSize: "clamp(26px, 4.4vw, 48px)",
+                    lineHeight: 1.1,
+                    letterSpacing: "-0.02em",
+                    fontWeight: 500,
+                }}
+            >
+                {heading}
+            </h2>
+            <p
+                style={{
+                    margin: "24px 0 0",
+                    maxWidth: 560,
+                    fontSize: "clamp(15px, 2vw, 18px)",
+                    lineHeight: 1.6,
+                    color: "rgba(255,255,255,0.62)",
+                }}
+            >
+                {paragraph}
+            </p>
+            <a
+                href={`mailto:${email}`}
+                style={{
+                    display: "inline-block",
+                    marginTop: 28,
+                    fontSize: "clamp(18px, 2.6vw, 26px)",
+                    letterSpacing: "-0.01em",
+                    fontWeight: 500,
+                    color: "#fff",
+                    textDecoration: "none",
+                    borderBottom: "1px solid rgba(255,255,255,0.35)",
+                    paddingBottom: 4,
+                }}
+            >
+                {email}
+            </a>
         </div>
     )
 }

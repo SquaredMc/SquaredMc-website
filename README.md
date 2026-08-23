@@ -76,8 +76,8 @@ it needs real content below it to scroll through. `HeroCopy` and
 The pinned content stage. **Every text block on the page lives in here and hands
 off horizontally — nothing scrolls vertically past anything else.** `App.tsx`
 passes it an ordered `panes` array; it currently holds the opening copy
-(`HeroCopy`), a "What we do" `TextPane`, and a heading-only "Watch this space"
-`TextPane`.
+(`HeroCopy`), a "What we do" `TextPane`, a heading-only "Watch this space"
+`TextPane`, and a `ContactPane`.
 
 `TextPane` takes `label` and `paragraph` as optional, so passing `heading`
 alone gives a heading-only pane in the identical type style as every other
@@ -124,20 +124,9 @@ pane 0 │  0 ──► 1  │ pane 1 │  1 ──► 2  │ pane 2
 ```
 
 Within one handoff the outgoing pane exits over `[0, handoffMidpoint]` and the
-incoming one arrives over `[handoffMidpoint, paneSettledAt]`. Measured from the
-real `paneKeyframes` output for the current 3 panes:
-
-| progress | intro | what we do | watch this space |
-| --- | --- | --- | --- |
-| 0 – 0.12 | 0% resting | 100% parked | 100% parked |
-| 0.20 | -54% leaving | 100% parked | 100% parked |
-| 0.30 | -100% gone | 75% arriving | 100% parked |
-| 0.42 – 0.55 | -100% | **0% resting** | 100% parked |
-| 0.62 | -100% | -41% leaving | 100% parked |
-| 0.72 | -100% | -100% gone | 88% arriving |
-| 0.90 – 1 | -100% | -100% | **0% resting** |
-
-Never more than one pane in motion at a time.
+incoming one arrives over `[handoffMidpoint, paneSettledAt]`. Verified against
+the real `paneKeyframes` output for the current 4 panes: inputs are monotonic
+and **never more than one pane is in motion** at any progress.
 
 #### Every pane gets a real stop
 
@@ -153,6 +142,7 @@ straight past them without the text ever settling.
 | intro | 70vh |
 | what we do | 88vh |
 | watch this space | 88vh |
+| contact | 88vh |
 
 The middle and last panes get a little more than `scrollPerHold` because the
 tail of the handoff that delivers them — the `1 - paneSettledAt` remainder — is
@@ -165,8 +155,21 @@ All props: `squaresSlice` (0.3), `scrollPerHandoff` (180vh), `scrollPerHold`
 (70vh), `handoffMidpoint` (0.45), `paneSettledAt` (0.9), `ease`.
 
 Total stage height is `100vh + (panes x scrollPerHold) + ((panes - 1) x
-scrollPerHandoff)` — 670vh for the current three. Adding holds made the page
-taller; trim `scrollPerHandoff` if it feels long.
+scrollPerHandoff)` — **920vh** for the current four. Every pane added costs
+another 250vh; trim `scrollPerHandoff` if the page starts feeling long.
+
+#### Nav links and `paneAnchors`
+
+The panes live inside a pinned frame, so a plain `#id` on a pane would jump to
+the frame rather than to the scroll position where that pane is on screen.
+`paneAnchors` takes an id per pane and drops a zero-size anchor into the outer
+spacer at `i * (scrollPerHold + scrollPerHandoff)` — the start of that pane's
+hold phase, which is after it has finished arriving.
+
+For the contact pane that puts the anchor at 750vh of an 820vh runway, i.e.
+progress 0.915, where the pane measures exactly `0%` — fully settled. The jump
+is instant rather than smooth, because `index.css` deliberately keeps
+`scroll-behavior: auto`.
 
 **On `ease`:** it defaults to linear on purpose. framer-motion applies easing
 per keyframe *segment*, not across the whole range, so an aggressive ease-out
@@ -245,9 +248,9 @@ var from the workflow so assets resolve from the root again.
   put `<WorkPane />` back into the `panes` array in `App.tsx` to restore it,
   then swap the four placeholder cards for real case studies via the
   `workItems` prop or by editing `PLACEHOLDER_WORK`.
-- **Nav link targets.** `navItems` in `App.tsx` currently points at `#work`,
-  `#about`, `#contact`. Only `#work` resolves to a real element — About and
-  Contact sections don't exist yet.
+- **Work and About nav links are parked.** The header is down to a single
+  Contact link, which resolves to the contact pane via `paneAnchors`. Add the
+  other two back to `navItems` in `App.tsx` once there's content behind them.
 - **All three spec/source discrepancies are now resolved in favour of the
   spec.** The border is pushable blocks rather than a static shape (see below),
   the background squares share one opacity range (`SQUARE_OPACITY_MIN/MAX`,

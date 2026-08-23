@@ -2,6 +2,7 @@ import SquaredMcIntroHero from "./components/SquaredMcIntroHero"
 import HeroCopy from "./components/HeroCopy"
 import ScrollHandoffSection, {
     TextPane,
+    ContactPane,
 } from "./components/ScrollHandoffSection"
 import { SQUARES_SLICE, FOOTER_HEIGHT } from "./lib/layout"
 
@@ -12,11 +13,9 @@ export default function App() {
                 scroll-shrink reads window.scrollY and needs that content to
                 exist for there to be anything to scroll through. */}
             <SquaredMcIntroHero
-                navItems={[
-                    { label: "Work", href: "#work" },
-                    { label: "About", href: "#about" },
-                    { label: "Contact", href: "#contact" },
-                ]}
+                // Work and About are parked until there's real content behind
+                // them. Contact scrolls to the contact pane — see paneAnchors.
+                navItems={[{ label: "Contact", href: "#contact" }]}
                 squaresCompressTo={SQUARES_SLICE}
             />
 
@@ -26,26 +25,26 @@ export default function App() {
                 The Selected Work rail is parked, not deleted — `WorkPane` and
                 `PLACEHOLDER_WORK` are still there. Drop <WorkPane /> back into
                 this array to bring it back. */}
-            <div id="work">
-                <ScrollHandoffSection
-                    squaresSlice={SQUARES_SLICE}
-                    panes={[
-                        <HeroCopy key="intro" />,
-                        <TextPane
-                            key="what"
-                            label="What we do"
-                            heading="We build the version we wish existed."
-                            paragraph="Every project starts the same way — something we use every day gets in its own way, and nobody has fixed it properly. So we do."
-                        />,
-                        // Heading-only, so it lands in the identical type style
-                        // as the other section headers.
-                        <TextPane
-                            key="soon"
-                            heading="Watch this space, more information coming soon!"
-                        />,
-                    ]}
-                />
-            </div>
+            <ScrollHandoffSection
+                squaresSlice={SQUARES_SLICE}
+                paneAnchors={[undefined, undefined, undefined, "contact"]}
+                panes={[
+                    <HeroCopy key="intro" />,
+                    <TextPane
+                        key="what"
+                        label="What we do"
+                        heading="We build the version we wish existed."
+                        paragraph="Every project starts the same way — something we use every day gets in its own way, and nobody has fixed it properly. So we do."
+                    />,
+                    // Heading-only, so it lands in the identical type style
+                    // as the other section headers.
+                    <TextPane
+                        key="soon"
+                        heading="Watch this space, more information coming soon!"
+                    />,
+                    <ContactPane key="contact" />,
+                ]}
+            />
 
             {/* Fixed page chrome: on screen for every section, hero included.
                 Opaque and above the stage panel (z 30), so pane content slides
