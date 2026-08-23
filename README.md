@@ -262,39 +262,71 @@ progress still exactly 0.915.
 
 ## Deployment
 
-Live at **https://squaredmc.github.io/SquaredMc-website/**, redeployed on every
-push to `main` via [`.github/workflows/deploy.yml`](.github/workflows/deploy.yml).
+The site is served from **https://squaredmc.com/**, redeployed on every push to
+`main` via [`.github/workflows/deploy.yml`](.github/workflows/deploy.yml).
 
-**Why Pages over Vercel here:** Vercel was the default preference, but linking a
-Vercel project needs an interactive OAuth login or a personal access token that
-wasn't available when this was set up. Pages was wireable end-to-end from the
-repo alone.
+`squaredmc.github.io/SquaredMc-website/` is the fallback URL. Once the custom
+domain is active GitHub redirects it there, but the build works at either
+address — see Base path below.
+
+### Custom domain
+
+Two pieces have to agree:
+
+1. **`public/CNAME`** contains `squaredmc.com`. Vite copies it into `dist/`, so
+   it rides along in the published artifact. For an Actions-based Pages deploy
+   the file has to be *in the artifact* — otherwise GitHub drops the custom
+   domain on every deploy.
+2. **DNS** on squaredmc.com, which is managed at the registrar, not here.
+
+DNS records (from GitHub's docs):
+
+| Type | Name | Value |
+| --- | --- | --- |
+| A | `@` | `185.199.108.153` |
+| A | `@` | `185.199.109.153` |
+| A | `@` | `185.199.110.153` |
+| A | `@` | `185.199.111.153` |
+| CNAME | `www` | `squaredmc.github.io` |
+
+Optional IPv6, as AAAA records on `@`: `2606:50c0:8000::153`,
+`2606:50c0:8001::153`, `2606:50c0:8002::153`, `2606:50c0:8003::153`.
+
+The `www` CNAME points at `squaredmc.github.io` — **without** the repository
+name. Once DNS resolves, turn on *Enforce HTTPS* in the repo's Pages settings;
+GitHub provisions the certificate, which can take up to an hour.
+
+### Base path
+
+`vite.config.ts` uses `base: './'` — relative asset URLs, so one build serves
+correctly from both `squaredmc.com/` and
+`squaredmc.github.io/SquaredMc-website/`.
+
+It used to be an absolute base fed by a `VITE_BASE` env var in the workflow,
+which pinned the build to one URL shape and had to change in lockstep with the
+domain. Relative is safe here because the site is a single page with no
+client-side router — nested routes are where `./` bites, and there aren't any.
+
+### Pages vs Vercel
+
+Vercel was the original preference, but linking a project needs an interactive
+OAuth login or a token that wasn't available at setup. Pages was wireable
+end-to-end from the repo alone.
 
 > **Note:** Pages doesn't serve private repos on GitHub's free plan, so this
-> repo was switched to **public** to publish. If it needs to go private again,
-> the site has to move to Vercel (or the org needs a paid plan) — Pages will
-> stop serving it.
-
-The tradeoff between the two is worth knowing:
+> repo is **public**. Making it private again means moving to Vercel or paying
+> for the org — Pages will stop serving it.
 
 | | GitHub Pages | Vercel |
 | --- | --- | --- |
 | Setup | Already done, no external account | Needs a Vercel account linked to the repo |
 | Preview deploys per PR | No | Yes, automatic |
-| Custom domain | Supported (needs a `CNAME` file + DNS) | Supported, simpler |
+| Custom domain | Supported (CNAME file + DNS) | Supported, simpler |
 | Build config | The workflow file | Zero-config, detects Vite |
 
 **To switch to Vercel later:** import the repo at vercel.com/new — it detects
-Vite with no configuration. Then delete `.github/workflows/deploy.yml`, and drop
-the `VITE_BASE` env var so `base` returns to `/` (Vercel serves from the domain
-root, not a subpath).
-
-### Base path
-
-`vite.config.ts` reads `base` from `VITE_BASE`, defaulting to `/`. The Pages
-workflow sets it to `/SquaredMc-website/` because Pages serves the repo from
-that subpath. If you attach a custom domain like squaredmc.com, remove that env
-var from the workflow so assets resolve from the root again.
+Vite with no configuration. Then delete `.github/workflows/deploy.yml` and move
+the domain's DNS to Vercel. `base: './'` needs no change.
 
 ## Open TODOs
 

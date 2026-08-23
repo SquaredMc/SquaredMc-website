@@ -30,11 +30,13 @@ jobs:
       - run: npm ci
 
       - name: Build
-        # Pages serves this repo from squaredmc.github.io/SquaredMc-website/,
-        # so built asset URLs need that prefix. If you point a custom domain
-        # (e.g. squaredmc.com) at Pages, drop this line so base goes back to /.
-        env:
-          VITE_BASE: /SquaredMc-website/
+        # No base path env var: vite.config.ts uses a relative base, so the
+        # same build serves correctly from squaredmc.com and from the
+        # squaredmc.github.io/SquaredMc-website/ fallback.
+        #
+        # public/CNAME carries the custom domain into the published artifact —
+        # for an Actions-based Pages deploy the file has to be in the artifact
+        # or GitHub drops the domain on every deploy.
         run: npm run build
 
       - uses: actions/upload-pages-artifact@v3
