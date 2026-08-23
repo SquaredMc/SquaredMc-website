@@ -859,13 +859,28 @@ export default function SquaredMcIntroHero({
                     pointerEvents: "none",
                 }}
             >
-                <div
+                {/* The header mark doubles as "back to the top", i.e. back to
+                    the full-size logo. Unlike the big logo this one IS
+                    clickable, so it gets a pointer cursor. */}
+                <a
+                    href="#"
+                    aria-label="SquaredMc — back to top"
+                    onClick={(e) => {
+                        e.preventDefault()
+                        // Instant, not smooth. index.css keeps
+                        // scroll-behavior: auto on purpose, and easing ~900vh
+                        // back to the top would scrub the whole pane handoff
+                        // sequence in reverse on the way up.
+                        window.scrollTo({ top: 0, behavior: "auto" })
+                    }}
                     style={{
                         position: "relative",
+                        display: "block",
                         width: 44,
                         height: 44,
                         flexShrink: 0,
                         backgroundColor: "#000",
+                        cursor: "pointer",
                     }}
                 >
                     <svg
@@ -892,7 +907,7 @@ export default function SquaredMcIntroHero({
                             />
                         ))
                     )}
-                </div>
+                </a>
                 <nav style={{ display: "flex", gap: 28, marginLeft: "auto" }}>
                     {navItems.map((item) => (
                         <a

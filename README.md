@@ -171,6 +171,13 @@ progress 0.915, where the pane measures exactly `0%` — fully settled. The jump
 is instant rather than smooth, because `index.css` deliberately keeps
 `scroll-behavior: auto`.
 
+The **header logo mark** is a back-to-top link — click it from anywhere and you
+return to the full-size logo at the top of the page. It's an `<a>` whose click
+handler calls `preventDefault()` then `scrollTo({ top: 0 })`, so the `#` never
+reaches the URL. Also instant: easing ~900vh back up would scrub the entire
+pane handoff sequence in reverse on the way. Unlike the big hero logo — which
+isn't clickable and uses the default cursor — this one gets `cursor: pointer`.
+
 **On `ease`:** it defaults to linear on purpose. framer-motion applies easing
 per keyframe *segment*, not across the whole range, so an aggressive ease-out
 like `[0.16, 1, 0.3, 1]` is ~95% complete a fifth of the way through a cycle —
