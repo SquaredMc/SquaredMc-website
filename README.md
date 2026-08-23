@@ -201,6 +201,55 @@ It was slimmed from ~108px to `FOOTER_HEIGHT` (56px) when it became persistent
 — the old height was fine for a block at the end of a scrolling page, but eats
 too much viewport as a permanent bar. It now sits close to the 64px header.
 
+## Touch and mobile
+
+Touch originally did **nothing** here. Only `mousemove`, `mouseenter` and
+`mouseleave` were bound, and mobile browsers don't fire `mousemove` during a
+drag, so neither the logo distortion nor the square push ever ran on a phone.
+
+Both now work from one code path:
+
+- **Drag** — `touchstart` / `touchmove` are registered **passive**, which is
+  what makes this work: passive listeners keep firing while the browser scrolls
+  the page, so the squares part around your finger as you scroll. Pointer
+  Events would not do this — the browser fires `pointercancel` the moment it
+  claims the gesture for scrolling.
+- **Tap** — sets `impulse`, giving one frame at `TAP_IMPULSE` (6x) the normal
+  force, so a stationary tap still shoves things. A hovering cursor pushes
+  every frame and accumulates velocity; a tap gets one frame, so it has to be
+  worth several.
+- **Lift** — `touchend` / `touchcancel` clear the pointer so everything springs
+  back.
+
+Touch has no enter/leave, so `isOverLogo` is hit-tested against the logo rect
+on every move. Mouse goes through the same path rather than keeping two ways of
+deciding the same thing.
+
+### The parked-cursor bug this fixed
+
+`cursorX` / `cursorY` start at `0, 0` and the square push was gated only on
+`!isOverLogo`. That meant the physics treated the **viewport's top-left corner
+as a permanently parked cursor**, shoving every square within `PUSH_RADIUS`
+(160px) of it away — forever. A first mouse move hid it on desktop; on touch
+nothing ever corrected it, and it carved a visible hole out of the corner. It
+got worse once the squares compressed into the top 30%, because the corner sits
+inside that slice.
+
+`hasPointer` now gates the push, so nothing moves until a real pointer has
+actually been seen.
+
+### `dvh`, not `vh`
+
+The hero, the pinned frame, the stage container and the anchor offsets are all
+in `dvh`. On iOS Safari `100vh` is the URL-bar-*hidden* height, so a vh-sized
+pinned frame runs past the fold while the bar is showing.
+
+All four have to use the **same** unit. Mixing them would leave the real runway
+different from the one the anchor offsets were computed against, and the nav
+anchors would stop landing on a settled pane. Verified at 375x812: hero and
+frame 812px, stage 7470px (920dvh), contact anchor 6090px (750dvh), anchor
+progress still exactly 0.915.
+
 ## Reduced motion
 
 `prefers-reduced-motion: reduce` is respected throughout:

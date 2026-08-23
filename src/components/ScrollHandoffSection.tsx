@@ -189,15 +189,22 @@ export default function ScrollHandoffSection({
         )
     }
 
-    // 100vh for the frame itself, plus the runway. The frame pins for
-    // (height - 100vh), which is exactly the runway.
+    // 100dvh for the frame itself, plus the runway. The frame pins for
+    // (height - 100dvh), which is exactly the runway.
+    //
+    // dvh everywhere in here, not vh: on iOS Safari 100vh is the
+    // URL-bar-hidden height, so a vh-sized frame runs past the fold while the
+    // bar is showing. The container height, the frame and the anchor offsets
+    // all have to use the SAME unit — mixing them would leave the real runway
+    // different from the one the anchor offsets were computed against, and the
+    // nav anchors would stop landing on a settled pane.
     const timing = {
         hold: scrollPerHold,
         handoff: scrollPerHandoff,
         midpoint: handoffMidpoint,
         settled: paneSettledAt,
     }
-    const height = `${100 + stageRunway(panes.length, scrollPerHold, scrollPerHandoff)}vh`
+    const height = `${100 + stageRunway(panes.length, scrollPerHold, scrollPerHandoff)}dvh`
 
     return (
         // No background on the shell — painting it here would cover the squares
@@ -214,7 +221,7 @@ export default function ScrollHandoffSection({
                         aria-hidden="true"
                         style={{
                             position: "absolute",
-                            top: `${i * (scrollPerHold + scrollPerHandoff)}vh`,
+                            top: `${i * (scrollPerHold + scrollPerHandoff)}dvh`,
                             left: 0,
                             width: 1,
                             height: 1,
@@ -222,7 +229,7 @@ export default function ScrollHandoffSection({
                     />
                 ) : null
             )}
-            <div style={{ position: "sticky", top: 0, height: "100vh" }}>
+            <div style={{ position: "sticky", top: 0, height: "100dvh" }}>
                 {/* Content panel: starts `squaresSlice` down so the strip above
                     it stays clear for the hero's floating squares. */}
                 <div

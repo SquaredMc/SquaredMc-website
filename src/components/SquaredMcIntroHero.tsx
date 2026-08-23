@@ -414,6 +414,14 @@ const SQUARE_OPACITY_MAX = 0.28
 // ── Background square physics ────────────────────────────────────────────────
 const PUSH_RADIUS = 160
 const PUSH_STRENGTH = 22
+/**
+ * Multiplier on a tap's one-frame shove.
+ *
+ * A hovering cursor pushes every frame and the velocity accumulates, so a
+ * single frame at the normal strength is barely visible. A tap gets one frame,
+ * so it needs to be worth several.
+ */
+const TAP_IMPULSE = 6
 const DAMPING = 0.93
 const ROT_DAMPING = 0.95
 const DRIFT_FORCE = 0.014
@@ -519,6 +527,11 @@ export default function SquaredMcIntroHero({
         cursorX: 0,
         cursorY: 0,
         shrink: 0,
+        // Whether a real pointer is currently present. Nothing is pushed until
+        // this is true — see the pointer-tracking effect for why.
+        hasPointer: false,
+        // Set for one frame by a tap, for a stronger one-off shove.
+        impulse: false,
     })
 
     // ── Background squares: white + colored, spread across full screen ───────
@@ -657,6 +670,9 @@ export default function SquaredMcIntroHero({
         function tick() {
             const W = window.innerWidth
             const H = window.innerHeight
+            // Read once and clear at the end, so a tap's extra shove lands on
+            // exactly one frame and reaches both the letters and the squares.
+            const kick = int.impulse ? TAP_IMPULSE : 1
 
             // ── Letter + border block spring ─────────────────────────────────────
             const logoEl = logoRef.current
@@ -673,13 +689,13 @@ export default function SquaredMcIntroHero({
                     const p = pixPhys[i]
                     if (!p) continue
 
-                    if (int.isOverLogo) {
+                    if (int.hasPointer && int.isOverLogo) {
                         const dx = r.x + r.w / 2 + p.ox - csx
                         const dy = r.y + r.h / 2 + p.oy - csy
                         const dist = Math.sqrt(dx * dx + dy * dy)
                         if (dist < PIX_PUSH_RADIUS && dist > 0.5) {
                             const t = 1 - dist / PIX_PUSH_RADIUS
-                            const f = PIX_PUSH_FORCE * t * t
+                            const f = PIX_PUSH_FORCE * t * t * kick
                             p.vx += f * (dx / dist)
                             p.vy += f * (dy / dist)
                         }
@@ -717,13 +733,17 @@ export default function SquaredMcIntroHero({
                 const cx = bx + sq.size / 2 + ph.ox
                 const cy = by + sq.size / 2 + ph.oy
 
-                if (!int.isOverLogo) {
+                // hasPointer is what stops the untouched initial (0,0) from
+                // acting as a parked cursor and permanently shoving every
+                // square out of the top-left corner — invisible on desktop
+                // once the mouse moves, permanent on touch.
+                if (int.hasPointer && !int.isOverLogo) {
                     const dx = cx - int.cursorX
                     const dy = cy - int.cursorY
                     const dist = Math.sqrt(dx * dx + dy * dy)
                     if (dist < PUSH_RADIUS && dist > 1) {
                         const t = 1 - dist / PUSH_RADIUS
-                        const f = PUSH_STRENGTH * t * t
+                        const f = PUSH_STRENGTH * t * t * kick
                         ph.vx += f * (dx / dist)
                         ph.vy += f * (dy / dist)
                         ph.vrot += f * 0.1 * (i % 2 === 0 ? 1 : -1)
@@ -765,6 +785,7 @@ export default function SquaredMcIntroHero({
                     el.style.transform = `translate(${ph.ox.toFixed(1)}px,${ph.oy.toFixed(1)}px) rotate(${ph.rot.toFixed(1)}deg)`
             }
 
+            int.impulse = false
             rafRef.current = requestAnimationFrame(tick)
         }
 
@@ -772,28 +793,65 @@ export default function SquaredMcIntroHero({
         return () => cancelAnimationFrame(rafRef.current)
     }, [fSquares, prefersReducedMotion, squaresCompressTo])
 
-    // ── Mouse tracking ────────────────────────────────────────────────────────
+    // ── Pointer tracking: mouse AND touch ─────────────────────────────────────
+    // Touch used to do nothing at all here — only mousemove/mouseenter/
+    // mouseleave were bound, and mobile browsers don't fire mousemove during a
+    // drag, so neither the logo distortion nor the square push ever ran on a
+    // phone.
     useEffect(() => {
         if (prefersReducedMotion) return
         const int = intRef.current
-        const onMove = (e: MouseEvent) => {
-            int.cursorX = e.clientX
-            int.cursorY = e.clientY
-        }
         const logoEl = logoRef.current
-        const onEnter = () => {
-            int.isOverLogo = true
+
+        const setCursor = (x: number, y: number) => {
+            int.cursorX = x
+            int.cursorY = y
+            int.hasPointer = true
+            // Touch has no enter/leave, so the logo is hit-tested on every
+            // move. Mouse goes through the same path to keep one source of
+            // truth rather than two ways of deciding the same thing.
+            const r = logoEl?.getBoundingClientRect()
+            int.isOverLogo =
+                !!r && x >= r.left && x <= r.right && y >= r.top && y <= r.bottom
         }
-        const onLeave = () => {
+
+        const onMouseMove = (e: MouseEvent) => setCursor(e.clientX, e.clientY)
+
+        const onTouchMove = (e: TouchEvent) => {
+            const t = e.touches[0]
+            if (t) setCursor(t.clientX, t.clientY)
+        }
+
+        const onTouchStart = (e: TouchEvent) => {
+            const t = e.touches[0]
+            if (!t) return
+            setCursor(t.clientX, t.clientY)
+            int.impulse = true // one-off shove so a stationary tap still does something
+        }
+
+        // Lifting the finger has to clear the pointer. Otherwise the last touch
+        // position keeps pushing forever, which is exactly the bug the initial
+        // (0,0) cursor used to cause in the corner.
+        const onTouchEnd = () => {
+            int.hasPointer = false
             int.isOverLogo = false
         }
-        window.addEventListener("mousemove", onMove, { passive: true })
-        logoEl?.addEventListener("mouseenter", onEnter)
-        logoEl?.addEventListener("mouseleave", onLeave)
+
+        window.addEventListener("mousemove", onMouseMove, { passive: true })
+        // Passive, so these keep firing while the browser scrolls the page —
+        // that is what lets the squares part around a finger mid-scroll. A
+        // non-passive listener, or Pointer Events, would be cancelled the
+        // moment the browser claimed the gesture for scrolling.
+        window.addEventListener("touchstart", onTouchStart, { passive: true })
+        window.addEventListener("touchmove", onTouchMove, { passive: true })
+        window.addEventListener("touchend", onTouchEnd, { passive: true })
+        window.addEventListener("touchcancel", onTouchEnd, { passive: true })
         return () => {
-            window.removeEventListener("mousemove", onMove)
-            logoEl?.removeEventListener("mouseenter", onEnter)
-            logoEl?.removeEventListener("mouseleave", onLeave)
+            window.removeEventListener("mousemove", onMouseMove)
+            window.removeEventListener("touchstart", onTouchStart)
+            window.removeEventListener("touchmove", onTouchMove)
+            window.removeEventListener("touchend", onTouchEnd)
+            window.removeEventListener("touchcancel", onTouchEnd)
         }
     }, [prefersReducedMotion])
 
@@ -802,7 +860,10 @@ export default function SquaredMcIntroHero({
             style={{
                 position: "relative",
                 width: "100%",
-                height: "100vh",
+                // dvh, not vh: on iOS Safari 100vh is the URL-bar-hidden
+                // height, so the hero would run past the fold while the bar is
+                // showing.
+                height: "100dvh",
                 backgroundColor: "#000",
                 color: "#fff",
                 fontFamily: "'Space Grotesk', system-ui, sans-serif",
