@@ -2,16 +2,8 @@ import SquaredMcIntroHero from "./components/SquaredMcIntroHero"
 import HeroCopy from "./components/HeroCopy"
 import ScrollHandoffSection, {
     TextPane,
-    WorkPane,
 } from "./components/ScrollHandoffSection"
-
-/**
- * Fraction of the viewport kept clear at the top for the hero's floating
- * squares. Both components need the SAME value: the hero confines the squares
- * to this strip as you scroll, and the stage refuses to paint over it — so the
- * squares stay visible and pushable for the whole page. Change it in one place.
- */
-const SQUARES_SLICE = 0.3
+import { SQUARES_SLICE, FOOTER_HEIGHT } from "./lib/layout"
 
 export default function App() {
     return (
@@ -29,7 +21,11 @@ export default function App() {
             />
 
             {/* One pinned stage for all the copy. Panes hand off horizontally;
-                nothing scrolls vertically past anything else. */}
+                nothing scrolls vertically past anything else.
+
+                The Selected Work rail is parked, not deleted — `WorkPane` and
+                `PLACEHOLDER_WORK` are still there. Drop <WorkPane /> back into
+                this array to bring it back. */}
             <div id="work">
                 <ScrollHandoffSection
                     squaresSlice={SQUARES_SLICE}
@@ -41,26 +37,41 @@ export default function App() {
                             heading="We build the version we wish existed."
                             paragraph="Every project starts the same way — something we use every day gets in its own way, and nobody has fixed it properly. So we do."
                         />,
-                        <WorkPane key="work" />,
+                        // Heading-only, so it lands in the identical type style
+                        // as the other section headers.
+                        <TextPane
+                            key="soon"
+                            heading="Watch this space, more information coming soon!"
+                        />,
                     ]}
                 />
             </div>
 
+            {/* Fixed page chrome: on screen for every section, hero included.
+                Opaque and above the stage panel (z 30), so pane content slides
+                behind it rather than over it. Panes carry FOOTER_HEIGHT as
+                bottom padding so their text still clears the bar. */}
             <footer
                 style={{
-                    position: "relative",
-                    zIndex: 30,
+                    position: "fixed",
+                    left: 0,
+                    right: 0,
+                    bottom: 0,
+                    height: FOOTER_HEIGHT,
+                    zIndex: 40,
+                    display: "flex",
+                    alignItems: "center",
                     backgroundColor: "#000",
-                    color: "rgba(255,255,255,0.35)",
                     borderTop: "1px solid rgba(255,255,255,0.1)",
-                    padding: "48px 28px",
-                    fontSize: 12,
-                    letterSpacing: "0.14em",
+                    color: "rgba(255,255,255,0.35)",
+                    padding: "0 28px",
+                    fontSize: 11,
+                    letterSpacing: "0.18em",
                     textTransform: "uppercase",
                     fontFamily: "'Space Grotesk', system-ui, sans-serif",
                 }}
             >
-                <div style={{ maxWidth: 1180, margin: "0 auto" }}>
+                <div style={{ maxWidth: 1180, margin: "0 auto", width: "100%" }}>
                     SquaredMc — {new Date().getFullYear()}
                 </div>
             </footer>

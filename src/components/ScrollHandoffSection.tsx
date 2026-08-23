@@ -46,6 +46,7 @@ import {
     type BezierEase,
     type WorkItem,
 } from "../lib/handoff"
+import { FOOTER_HEIGHT } from "../lib/layout"
 import {
     motion,
     useScroll,
@@ -151,14 +152,22 @@ export default function ScrollHandoffSection({
             // The ref stays attached even though nothing reads the progress in
             // this branch — useScroll was already called above and warns if its
             // target ref never resolves to an element.
-            <div ref={containerRef} style={{ backgroundColor: "#000" }}>
+            <div
+                ref={containerRef}
+                style={{
+                    backgroundColor: "#000",
+                    // Nothing is pinned in this branch, so the last section
+                    // would otherwise end underneath the fixed footer.
+                    paddingBottom: FOOTER_HEIGHT,
+                }}
+            >
                 {panes.map((p, i) => (
                     <section
                         key={i}
                         style={{
                             ...paneStyle,
                             position: "relative",
-                            padding: "12vh 28px",
+                            padding: `12vh 28px`,
                         }}
                     >
                         {p}
@@ -226,21 +235,26 @@ export default function ScrollHandoffSection({
 
 // ── Built-in panes ───────────────────────────────────────────────────────────
 
+/**
+ * A text pane. Only `heading` is required — passing just that gives a
+ * heading-only pane in the identical type style as every other section header,
+ * which is the point: the style lives in one place.
+ */
 export function TextPane({
     label,
     heading,
     paragraph,
 }: {
-    label: string
+    label?: string
     heading: string
-    paragraph: string
+    paragraph?: string
 }) {
     return (
         <div style={{ maxWidth: 760, width: "100%", margin: "0 auto" }}>
-            <p style={eyebrow}>{label}</p>
+            {label && <p style={eyebrow}>{label}</p>}
             <h2
                 style={{
-                    margin: "24px 0 0",
+                    margin: label ? "24px 0 0" : 0,
                     fontSize: "clamp(26px, 4.4vw, 48px)",
                     lineHeight: 1.1,
                     letterSpacing: "-0.02em",
@@ -249,17 +263,19 @@ export function TextPane({
             >
                 {heading}
             </h2>
-            <p
-                style={{
-                    margin: "24px 0 0",
-                    maxWidth: 560,
-                    fontSize: "clamp(15px, 2vw, 18px)",
-                    lineHeight: 1.6,
-                    color: "rgba(255,255,255,0.62)",
-                }}
-            >
-                {paragraph}
-            </p>
+            {paragraph && (
+                <p
+                    style={{
+                        margin: "24px 0 0",
+                        maxWidth: 560,
+                        fontSize: "clamp(15px, 2vw, 18px)",
+                        lineHeight: 1.6,
+                        color: "rgba(255,255,255,0.62)",
+                    }}
+                >
+                    {paragraph}
+                </p>
+            )}
         </div>
     )
 }
@@ -357,7 +373,10 @@ const paneStyle: Omit<
     inset: 0,
     display: "flex",
     alignItems: "center",
-    padding: "0 28px",
+    // Bottom padding clears the fixed footer. The pane itself still extends
+    // the full height and slides behind the bar — this only keeps the text
+    // centred in the part you can actually see.
+    padding: `0 28px ${FOOTER_HEIGHT}px`,
 }
 
 const eyebrow: CSSProperties = {

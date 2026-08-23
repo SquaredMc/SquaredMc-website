@@ -32,6 +32,9 @@ src/
     SquaredMcIntroHero.tsx         animated hero (ported from Framer)
     HeroCopy.tsx                   opening marketing copy (first stage pane)
     ScrollHandoffSection.tsx       pinned stage, horizontal pane handoff
+  lib/
+    handoff.ts                     pure keyframe maths + placeholder work data
+    layout.ts                      SQUARES_SLICE, FOOTER_HEIGHT
 ```
 
 ### `SquaredMcIntroHero.tsx`
@@ -73,7 +76,12 @@ it needs real content below it to scroll through. `HeroCopy` and
 The pinned content stage. **Every text block on the page lives in here and hands
 off horizontally — nothing scrolls vertically past anything else.** `App.tsx`
 passes it an ordered `panes` array; it currently holds the opening copy
-(`HeroCopy`), a "What we do" `TextPane`, and the `WorkPane` cards.
+(`HeroCopy`), a "What we do" `TextPane`, and a heading-only "Watch this space"
+`TextPane`.
+
+`TextPane` takes `label` and `paragraph` as optional, so passing `heading`
+alone gives a heading-only pane in the identical type style as every other
+section header — the style is defined once and reused rather than copied.
 
 #### The squares slice
 
@@ -82,8 +90,8 @@ viewport and the shell paints no background of its own, so the top 30% is never
 covered and the hero's floating squares stay visible — and pushable — for the
 whole page.
 
-`App.tsx` owns the fraction as a single `SQUARES_SLICE` constant and passes it to
-**both** components: the stage won't paint over that strip, and the hero's
+`src/lib/layout.ts` owns the fraction as a single `SQUARES_SLICE` constant, used
+by **both** components: the stage won't paint over that strip, and the hero's
 `squaresCompressTo` confines the squares to exactly it. They have to match, so
 change it in one place.
 
@@ -119,7 +127,7 @@ Within one handoff the outgoing pane exits over `[0, handoffMidpoint]` and the
 incoming one arrives over `[handoffMidpoint, paneSettledAt]`. Measured from the
 real `paneKeyframes` output for the current 3 panes:
 
-| progress | intro | what we do | work |
+| progress | intro | what we do | watch this space |
 | --- | --- | --- | --- |
 | 0 – 0.12 | 0% resting | 100% parked | 100% parked |
 | 0.20 | -54% leaving | 100% parked | 100% parked |
@@ -144,7 +152,7 @@ straight past them without the text ever settling.
 | --- | --- |
 | intro | 70vh |
 | what we do | 88vh |
-| work | 88vh |
+| watch this space | 88vh |
 
 The middle and last panes get a little more than `scrollPerHold` because the
 tail of the handoff that delivers them — the `1 - paneSettledAt` remainder — is
@@ -165,6 +173,23 @@ per keyframe *segment*, not across the whole range, so an aggressive ease-out
 like `[0.16, 1, 0.3, 1]` is ~95% complete a fifth of the way through a cycle —
 the outgoing pane visually finishes leaving long before the midpoint and the
 rest of that window becomes dead scroll. Keep any easing gentle.
+
+## The fixed footer
+
+The footer is page chrome, not the end of the document: `position: fixed` to
+the bottom, on screen for every section including the hero. It's opaque `#000`
+at `z-index: 40`, above the stage's content panel (`z-index: 30`), so pane
+content slides **behind** it rather than over it — verified by hit-testing the
+footer band, which returns the footer while the pane underneath still extends
+to the full viewport height.
+
+Panes carry `FOOTER_HEIGHT` as bottom padding so their text centres in the
+visible area instead of disappearing under the bar. The pane itself is not
+shortened; only its content is inset.
+
+It was slimmed from ~108px to `FOOTER_HEIGHT` (56px) when it became persistent
+— the old height was fine for a block at the end of a scrolling page, but eats
+too much viewport as a permanent bar. It now sits close to the 64px header.
 
 ## Reduced motion
 
@@ -214,9 +239,12 @@ var from the workflow so assets resolve from the root again.
 
 ## Open TODOs
 
-- **Real Work-section content.** `ScrollHandoffSection` ships four placeholder
-  cards ("Project One" … "Project Four"). Swap them via the `workItems` prop or
-  by editing `PLACEHOLDER_WORK`.
+- **Selected Work is parked, not deleted.** The rail was replaced with a
+  "Watch this space, more information coming soon!" pane. `WorkPane`,
+  `PLACEHOLDER_WORK` and the `.work-rail` styles are all still in the tree —
+  put `<WorkPane />` back into the `panes` array in `App.tsx` to restore it,
+  then swap the four placeholder cards for real case studies via the
+  `workItems` prop or by editing `PLACEHOLDER_WORK`.
 - **Nav link targets.** `navItems` in `App.tsx` currently points at `#work`,
   `#about`, `#contact`. Only `#work` resolves to a real element — About and
   Contact sections don't exist yet.
