@@ -63,6 +63,11 @@ export default function HeroCopy({
                     fontSize: "clamp(15px, 2vw, 18px)",
                     lineHeight: 1.6,
                     color: "rgba(255,255,255,0.62)",
+                    // Stops a single word being stranded on the last line.
+                    // Doing this rather than hand-placing a non-breaking space,
+                    // which only fixes the one width it was tuned at and can
+                    // create a worse break somewhere else.
+                    textWrap: "pretty",
                 }}
             >
                 {paragraph}

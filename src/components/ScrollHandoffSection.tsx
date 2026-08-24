@@ -305,10 +305,17 @@ export function TextPane({
                 <p
                     style={{
                         margin: "24px 0 0",
-                        maxWidth: 560,
+                        // 600, not 560: at 560 the "What we do" copy broke to
+                        // three lines with "do." stranded alone on the last
+                        // one. The extra 40px pulls it up to two (570 + 553).
+                        maxWidth: 600,
                         fontSize: "clamp(15px, 2vw, 18px)",
                         lineHeight: 1.6,
                         color: "rgba(255,255,255,0.62)",
+                        // Safety net at other widths. Note it did NOT fix the
+                        // case above on its own — Chrome still left a 57px last
+                        // line — so the measure is doing the real work.
+                        textWrap: "pretty",
                     }}
                 >
                     {paragraph}
@@ -354,6 +361,7 @@ export function ContactPane({
                     fontSize: "clamp(15px, 2vw, 18px)",
                     lineHeight: 1.6,
                     color: "rgba(255,255,255,0.62)",
+                    textWrap: "pretty",
                 }}
             >
                 {paragraph}
