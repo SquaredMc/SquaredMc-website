@@ -297,6 +297,13 @@ export function TextPane({
                     lineHeight: 1.1,
                     letterSpacing: "-0.02em",
                     fontWeight: 500,
+                    // balance, not pretty: it splits a heading into roughly
+                    // equal lines instead of leaving a single word stranded.
+                    // Measured on the body paragraph earlier, balance genuinely
+                    // equalises (533/559/27 became 415/364/339) whereas pretty
+                    // only nudged the break. Browsers cap balance at ~6 lines,
+                    // which headings never reach.
+                    textWrap: "balance",
                 }}
             >
                 {heading}
@@ -350,6 +357,13 @@ export function ContactPane({
                     lineHeight: 1.1,
                     letterSpacing: "-0.02em",
                     fontWeight: 500,
+                    // balance, not pretty: it splits a heading into roughly
+                    // equal lines instead of leaving a single word stranded.
+                    // Measured on the body paragraph earlier, balance genuinely
+                    // equalises (533/559/27 became 415/364/339) whereas pretty
+                    // only nudged the break. Browsers cap balance at ~6 lines,
+                    // which headings never reach.
+                    textWrap: "balance",
                 }}
             >
                 {heading}
