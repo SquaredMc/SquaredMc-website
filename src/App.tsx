@@ -15,7 +15,13 @@ export default function App() {
             <SquaredMcIntroHero
                 // Work and About are parked until there's real content behind
                 // them. Contact scrolls to the contact pane — see paneAnchors.
-                navItems={[{ label: "Contact", href: "#contact" }]}
+                // Refuelr is relative ("refuelr/", not "/refuelr/") for the
+                // same reason vite.config.ts uses base './': it has to resolve
+                // on squaredmc.com and on the github.io project-path fallback.
+                navItems={[
+                    { label: "Refuelr", href: "refuelr/" },
+                    { label: "Contact", href: "#contact" },
+                ]}
                 squaresCompressTo={SQUARES_SLICE}
             />
 
