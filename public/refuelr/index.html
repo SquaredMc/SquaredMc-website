@@ -1,0 +1,623 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Refuelr — Find the cheapest fuel near you | UK petrol and diesel prices</title>
+<meta name="description" content="Refuelr maps the latest UK forecourt prices around you, highlights the cheapest petrol or diesel, and shows what you could save on a full tank. Free, no account needed.">
+<link rel="canonical" href="https://squaredmc.com/refuelr/">
+<meta name="theme-color" content="#15181f">
+<!-- Preview only: remove before launch so search engines can index the site -->
+<meta name="robots" content="noindex">
+<!-- TODO: uncomment once the App Store ID exists -->
+<!-- <meta name="apple-itunes-app" content="app-id=APP_STORE_ID"> -->
+
+<meta property="og:type" content="website">
+<meta property="og:title" content="Refuelr — Find the cheapest fuel near you">
+<meta property="og:description" content="The latest UK fuel prices around you on one map, with the cheapest picked out and your saving per tank in pounds.">
+<meta property="og:url" content="https://squaredmc.com/refuelr/">
+<meta property="og:site_name" content="Refuelr">
+<meta property="og:locale" content="en_GB">
+<meta property="og:image" content="https://squaredmc.com/refuelr/assets/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Refuelr: find the cheapest fuel near you, with a map of nearby fuel prices">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Refuelr — Find the cheapest fuel near you">
+<meta name="twitter:description" content="The latest UK fuel prices around you on one map, with the cheapest picked out and your saving per tank in pounds.">
+<meta name="twitter:image" content="https://squaredmc.com/refuelr/assets/og-image.png">
+
+<link rel="icon" type="image/svg+xml" href="assets/icons/favicon.svg">
+<link rel="icon" type="image/png" sizes="32x32" href="assets/icons/favicon-32.png">
+<link rel="apple-touch-icon" href="assets/icons/apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Raleway:wght@800&family=Rubik:wght@400;500;600&display=swap">
+<link rel="stylesheet" href="css/tokens.css">
+<link rel="stylesheet" href="css/styles.css">
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  "name": "Refuelr",
+  "operatingSystem": "iOS",
+  "applicationCategory": "TravelApplication",
+  "url": "https://squaredmc.com/refuelr/",
+  "offers": {
+    "@type": "Offer",
+    "price": "0",
+    "priceCurrency": "GBP"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "SQUAREDMC LTD",
+    "url": "https://squaredmc.com/"
+  },
+  "description": "Refuelr shows the latest UK fuel prices for stations near you, highlights the cheapest, and estimates your saving per tank against the local average."
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "Is Refuelr free?",
+      "acceptedAnswer": { "@type": "Answer", "text": "Yes, Refuelr is free and shows one small banner ad. No account or subscription." }
+    },
+    {
+      "@type": "Question",
+      "name": "Where do the prices come from?",
+      "acceptedAnswer": { "@type": "Answer", "text": "Prices come from the UK government's Fuel Finder scheme, which requires forecourts to publish their prices. Refuelr refreshes them every few hours." }
+    },
+    {
+      "@type": "Question",
+      "name": "How up to date are the prices?",
+      "acceptedAnswer": { "@type": "Answer", "text": "Refuelr refreshes prices every few hours and shows the latest price each station has reported. A forecourt can change its price between refreshes, so the price at the pump is the one that counts." }
+    },
+    {
+      "@type": "Question",
+      "name": "Which fuels does Refuelr cover?",
+      "acceptedAnswer": { "@type": "Answer", "text": "Unleaded E10, Super E5 and Diesel." }
+    },
+    {
+      "@type": "Question",
+      "name": "Does it work everywhere in the UK?",
+      "acceptedAnswer": { "@type": "Answer", "text": "Refuelr shows forecourts across the UK that report their prices to Fuel Finder. Search within 1, 2, 5, 10 or 20 miles of where you are, or of any postcode or town." }
+    },
+    {
+      "@type": "Question",
+      "name": "Do you track my location?",
+      "acceptedAnswer": { "@type": "Answer", "text": "No. If you allow it, Refuelr uses your location to find stations near you. It isn't stored or used to build a history of where you've been, and you can search by postcode or town instead. The Privacy Policy explains what the app's ad provider collects." }
+    },
+    {
+      "@type": "Question",
+      "name": "Do I need an account?",
+      "acceptedAnswer": { "@type": "Answer", "text": "No. Your fuel, tank size and other settings stay on your phone." }
+    },
+    {
+      "@type": "Question",
+      "name": "A price looks wrong. What should I do?",
+      "acceptedAnswer": { "@type": "Answer", "text": "Prices are reported by the retailers and can change before the next refresh. If one still looks wrong, email hello@squaredmc.com with the station and the price you saw, and we'll look into it." }
+    },
+    {
+      "@type": "Question",
+      "name": "How is the saving worked out?",
+      "acceptedAnswer": { "@type": "Answer", "text": "Refuelr takes the difference between a station's price and the local average for your fuel, then multiplies it by your tank size. 6p a litre less on a 50-litre tank is about £3.00." }
+    },
+    {
+      "@type": "Question",
+      "name": "Does Refuelr show EV charging?",
+      "acceptedAnswer": { "@type": "Answer", "text": "No. Refuelr covers Unleaded E10, Super E5 and Diesel." }
+    },
+    {
+      "@type": "Question",
+      "name": "Is Refuelr on Android?",
+      "acceptedAnswer": { "@type": "Answer", "text": "Not at the moment. Refuelr is for iPhone." }
+    },
+    {
+      "@type": "Question",
+      "name": "How do I get support?",
+      "acceptedAnswer": { "@type": "Answer", "text": "Visit the Support page or email hello@squaredmc.com." }
+    }
+  ]
+}
+</script>
+</head>
+<body>
+
+<a class="skip-link" href="#main">Skip to content</a>
+
+<header class="site-header">
+  <div class="wrap header-row">
+    <a class="logo" href="#top" aria-label="Refuelr home">
+      <img src="assets/icons/logo.png" alt="Refuelr" width="127" height="28">
+    </a>
+    <nav class="nav" aria-label="Main">
+      <a class="navlink" href="#how">How it works</a>
+      <a class="navlink" href="#pricing">Pricing</a>
+      <a class="navlink" href="#faq">FAQ</a>
+      <a class="navlink" href="#about">About</a>
+      <a class="btn btn-primary btn-small" href="#download">Get the app</a>
+    </nav>
+    <button class="menu-toggle" type="button" aria-label="Menu" aria-expanded="false" aria-controls="mobile-menu">
+      <svg class="icon-open" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fbfbfb" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16"/><path d="M4 12h16"/><path d="M4 17h16"/></svg>
+      <svg class="icon-close" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fbfbfb" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12"/><path d="M18 6L6 18"/></svg>
+    </button>
+  </div>
+  <nav id="mobile-menu" class="mobile-menu" aria-label="Mobile">
+    <a class="navlink" href="#how">How it works<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#8a8f9a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg></a>
+    <a class="navlink" href="#pricing">Pricing<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#8a8f9a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg></a>
+    <a class="navlink" href="#faq">FAQ<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#8a8f9a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg></a>
+    <a class="navlink" href="#about">About<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#8a8f9a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg></a>
+    <a class="btn btn-primary" href="#download">Get the app</a>
+    <p class="mobile-menu-note">Free to use, with one small ad. No account needed.</p>
+  </nav>
+</header>
+
+<main id="main">
+
+  <!-- Hero -->
+  <section class="hero" aria-labelledby="hero-title">
+    <div class="hero-copy">
+      <h1 id="hero-title" class="hero-title">Find the <span class="hl">cheapest</span> fuel near you.</h1>
+      <p class="lede">Refuelr maps the latest forecourt prices around you, highlights the cheapest &amp;&nbsp;nearest stations for your fuel, and tells you how much it will cost to fill up.</p>
+      <div class="hero-ctas">
+        <a class="btn btn-primary" href="#how">See how it works ↓</a>
+        <!-- At launch, replace this link with Apple's official badge (unmodified, at least 40px tall):
+        <a class="app-store-badge" href="https://apps.apple.com/gb/app/refuelr/idAPP_STORE_ID"><img src="assets/icons/app-store-badge.svg" alt="Download on the App Store" width="156" height="52"></a> -->
+        <a class="btn btn-secondary" href="#download">Coming soon to the App Store</a>
+      </div>
+    </div>
+
+    <div class="hero-stage" role="img" aria-label="Illustrative map of Penge, SE20, seen in perspective and covered in fuel prices. The cheapest Unleaded E10 is £1.369, 0.4 miles away.">
+      <div class="hero-map">
+        <svg aria-hidden="true">
+          <g class="hero-map-art">
+            <rect x="-800" y="-600" width="3800" height="2600" fill="#181b23"/>
+            <g fill="#172a1f" stroke="#1e3627" stroke-width="2">
+              <path d="M700 60 L980 110 L950 300 L930 420 L770 440 L690 300 Z"/>
+              <path d="M1060 290 L1200 280 L1215 385 L1075 395 Z"/>
+              <path d="M1450 420 L1625 400 L1645 565 L1470 585 Z"/>
+              <path d="M400 860 L560 845 L572 935 L415 955 Z"/>
+              <path d="M1100 830 L1185 822 L1192 892 L1108 900 Z"/>
+            </g>
+            <ellipse cx="850" cy="340" rx="60" ry="22" fill="#18232f"/>
+            <g fill="none" stroke="#20242d" stroke-width="8" stroke-linecap="round">
+              <path d="M640 770 L980 745"/><path d="M700 830 L1000 865"/><path d="M760 905 L1060 965"/>
+              <path d="M980 745 L1000 1010"/><path d="M1150 725 L1180 1010"/><path d="M1300 765 L1600 825"/>
+              <path d="M1550 605 L1700 905"/><path d="M1300 505 L1600 465"/><path d="M1120 605 L1420 615"/>
+              <path d="M880 560 L900 425"/><path d="M1000 505 L1050 380"/><path d="M760 560 L860 460"/>
+              <path d="M480 600 L600 540"/><path d="M300 760 L600 785"/><path d="M350 900 L380 1200"/>
+              <path d="M480 1000 L760 1060"/><path d="M800 1100 L1200 1140"/><path d="M1450 905 L1700 1050"/>
+              <path d="M1600 300 L1900 350"/><path d="M1200 200 L1500 250"/><path d="M400 300 L650 380"/>
+              <path d="M250 500 L600 560"/><path d="M1700 650 L2000 700"/><path d="M1850 300 L1900 1000"/>
+              <path d="M100 300 L200 1200"/><path d="M1000 1010 L1600 1200"/><path d="M1060 560 L1240 575"/>
+            </g>
+            <g fill="none" stroke-linecap="round" stroke-linejoin="round">
+              <g stroke="#262b35" stroke-width="22">
+                <path d="M-800 720 C200 700 500 700 640 690 C800 680 900 650 1000 660 C1150 675 1300 710 1500 730 C1800 760 2100 800 3000 860"/>
+                <path d="M640 690 C650 520 670 380 690 260 C710 120 740 0 760 -600"/>
+                <path d="M780 682 C740 820 660 1000 560 2000"/>
+                <path d="M900 655 C860 520 800 460 690 300"/>
+                <path d="M1260 702 C1280 500 1310 300 1380 -600"/>
+                <path d="M1450 728 C1420 900 1380 1150 1340 2000"/>
+                <path d="M-800 1180 C400 1150 1000 1200 3000 1150"/>
+                <path d="M-800 120 C300 160 900 60 3000 100"/>
+              </g>
+              <g stroke="#333a46" stroke-width="13">
+                <path d="M-800 720 C200 700 500 700 640 690 C800 680 900 650 1000 660 C1150 675 1300 710 1500 730 C1800 760 2100 800 3000 860"/>
+                <path d="M640 690 C650 520 670 380 690 260 C710 120 740 0 760 -600"/>
+                <path d="M780 682 C740 820 660 1000 560 2000"/>
+                <path d="M900 655 C860 520 800 460 690 300"/>
+                <path d="M1260 702 C1280 500 1310 300 1380 -600"/>
+                <path d="M1450 728 C1420 900 1380 1150 1340 2000"/>
+                <path d="M-800 1180 C400 1150 1000 1200 3000 1150"/>
+                <path d="M-800 120 C300 160 900 60 3000 100"/>
+              </g>
+            </g>
+            <g fill="none">
+              <path d="M560 -600 C575 200 590 500 600 700 C615 950 640 1200 660 2000" stroke="#434a56" stroke-width="6"/>
+              <path d="M560 -600 C575 200 590 500 600 700 C615 950 640 1200 660 2000" stroke="#181b23" stroke-width="2" stroke-dasharray="14 14"/>
+              <path d="M640 -600 C820 150 960 360 1080 470 C1250 620 1500 760 3000 1500" stroke="#434a56" stroke-width="6"/>
+              <path d="M640 -600 C820 150 960 360 1080 470 C1250 620 1500 760 3000 1500" stroke="#181b23" stroke-width="2" stroke-dasharray="14 14"/>
+            </g>
+            <g fill="#181b23" stroke="#9aa0aa" stroke-width="3">
+              <circle cx="588" cy="500" r="8"/><circle cx="606" cy="860" r="8"/><circle cx="1000" cy="398" r="8"/><circle cx="1262" cy="588" r="8"/>
+            </g>
+            <g font-family="Rubik, sans-serif" font-weight="500" fill="#4f7a5c" font-size="20" letter-spacing="1">
+              <text x="730" y="230">CRYSTAL PALACE PARK</text><text x="1480" y="496">CATOR PARK</text><text x="420" y="910">BETTS PARK</text>
+            </g>
+            <g font-family="Rubik, sans-serif" font-weight="600" fill="#6f7580" font-size="36" letter-spacing="8" text-anchor="middle">
+              <text x="420" y="200">CRYSTAL PALACE</text><text x="1500" y="140">SYDENHAM</text><text x="330" y="800">ANERLEY</text><text x="1820" y="850">BECKENHAM</text><text x="1300" y="1110">ELMERS END</text><text x="300" y="1130">SOUTH NORWOOD</text>
+            </g>
+            <text x="830" y="616" fill="#9aa0aa" font-family="Rubik, sans-serif" font-weight="600" font-size="48" letter-spacing="10" text-anchor="middle">PENGE</text>
+          </g>
+        </svg>
+      </div>
+      <!-- Price pins, the cheapest station's marker and the "you are here" dot are placed by js/main.js -->
+      <div class="hero-pins" aria-hidden="true"></div>
+      <div class="hero-fog" aria-hidden="true"></div>
+      <div class="hero-fade" aria-hidden="true"></div>
+      <div class="hero-chip">Illustrative prices</div>
+    </div>
+
+    <div class="hero-card-wrap">
+      <div class="hero-card station-card">
+        <div class="station-head">
+          <div class="station-icon">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#3ee36b" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 21V5a2 2 0 012-2h6a2 2 0 012 2v16"/><path d="M3 21h14"/><path d="M15 9h2.5a1.5 1.5 0 011.5 1.5V16a1.5 1.5 0 003 0V8l-3-3"/></svg>
+          </div>
+          <div class="station-info">
+            <p class="station-name">Cheapest Unleaded E10</p>
+            <p class="station-meta">Penge · 0.4 mi away</p>
+          </div>
+          <p class="station-price"><span aria-hidden="true"><span class="unit">£</span><span class="big">1.36</span><span class="unit tail">9</span></span><span class="sr-only">£1.369 a litre</span></p>
+        </div>
+        <div class="saving">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#3ee36b" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 17l6-6 4 4 8-9"/><path d="M14 6h6v6"/></svg>
+          <p class="saving-text">Saves 6.0p/L vs area avg</p>
+          <p class="saving-tank">~£3.00/tank</p>
+        </div>
+        <a class="btn btn-primary btn-route" href="#how">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#1a3020" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="M13 6l6 6-6 6"/></svg>
+          Route here
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Why Refuelr -->
+  <section class="section" id="why" aria-labelledby="why-title">
+    <div class="wrap route route-first">
+      <div class="section-head">
+        <p class="eyebrow">Why Refuelr</p>
+        <h2 id="why-title" class="h2">The questions the price sign doesn't answer.</h2>
+      </div>
+      <div class="grid3">
+        <article class="card">
+          <div class="vis" aria-hidden="true">
+            <svg viewBox="0 0 360 168" preserveAspectRatio="xMidYMid slice" fill="none"><path d="M-10 120 C80 110 160 118 370 96" stroke="#2b313c" stroke-width="10"/><path d="M120 -10 C130 60 140 120 150 180" stroke="#2b313c" stroke-width="10"/><path d="M250 -10 L270 180" stroke="#20242d" stroke-width="6"/></svg>
+            <div class="tag" style="left: 22%; top: 62%; --k: 0.82"><div class="tag-body"><span>£1.42<span class="tail">9</span></span></div><div class="tag-tip"></div></div>
+            <div class="tag" style="left: 78%; top: 44%; --k: 0.82"><div class="tag-body"><span>£1.44<span class="tail">9</span></span></div><div class="tag-tip"></div></div>
+            <div class="tag tag-cheap" style="left: 52%; top: 80%"><div class="tag-body"><span>£1.36<span class="tail">9</span></span><span class="tag-rule"></span><span class="tag-label">Cheapest</span></div><div class="tag-tip"></div></div>
+          </div>
+          <h3 class="h3">Where's the cheapest fuel near me?</h3>
+          <p class="copy">Every nearby station's price for your fuel on one map, with the cheapest picked out.</p>
+        </article>
+
+        <article class="card">
+          <div class="vis vis-detour" aria-hidden="true">
+            <svg class="vis-route" viewBox="0 0 300 168" preserveAspectRatio="none" fill="none"><path d="M45 128 C105 128 140 62 225 66" stroke="#3a414c" stroke-width="3" stroke-dasharray="2 8" stroke-linecap="round" vector-effect="non-scaling-stroke"/></svg>
+            <div class="you-are-here" style="left: calc(50% - var(--d) * 0.7); top: 128px"></div>
+            <div class="tag tag-cheap" style="left: calc(50% + var(--d) * 0.5); top: 66px; font-size: 16px"><div class="tag-body"><span>£1.36<span class="tail">9</span></span></div><div class="tag-tip"></div></div>
+            <div class="distance-chip">0.4 mi</div>
+          </div>
+          <h3 class="h3">Is it worth the detour?</h3>
+          <p class="copy">See how far away a cheaper station is before you change route.</p>
+        </article>
+
+        <article class="card">
+          <div class="vis vis-compare" aria-hidden="true">
+            <div class="compare-row"><span>Area average</span><strong>£1.42<span class="tail">9</span></strong></div>
+            <div class="compare-row"><span>This station</span><strong>£1.36<span class="tail">9</span></strong></div>
+            <div class="saving">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#3ee36b" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 17l6-6 4 4 8-9"/><path d="M14 6h6v6"/></svg>
+              <span class="saving-text">Saves 6.0p/L</span>
+              <span class="saving-tank">~£3.00/tank</span>
+            </div>
+          </div>
+          <h3 class="h3">How much am I actually saving?</h3>
+          <p class="copy">Refuelr compares each price with the local average and shows the saving on your tank, in pounds.</p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- How it works -->
+  <section class="section band" id="how" aria-labelledby="how-title">
+    <div class="wrap route">
+      <div class="section-head">
+        <p class="eyebrow">How it works</p>
+        <h2 id="how-title" class="h2">Three steps to a cheaper fill-up.</h2>
+      </div>
+      <ol class="steps">
+        <li class="step">
+          <div class="phone">
+            <div class="screen screen-setup" role="img" aria-label="App screen: choose your fuel, car size and search radius">
+              <div class="setup-progress"><span></span><span></span><span></span></div>
+              <div class="setup-kicker">Your car</div>
+              <div class="setup-title">Tell us about your car.</div>
+              <div class="setup-text">We'll show your fuel first and what a tank will cost you.</div>
+              <div class="setup-label">Fuel</div>
+              <div class="setup-chips"><span class="is-on">Unleaded E10</span><span>Super E5</span><span>Diesel</span></div>
+              <div class="setup-label">Car size <span>(optional)</span></div>
+              <div class="setup-chips"><span>Small</span><span class="is-on">Medium</span><span>Large / SUV</span><span>Big SUV / van</span><span>Not sure</span></div>
+              <div class="setup-hint">e.g. Focus, Golf, Astra · about 50L</div>
+              <div class="setup-label">Search radius</div>
+              <div class="setup-chips"><span>1 mi</span><span>2 mi</span><span class="is-on">5 mi</span><span>10 mi</span><span>20 mi</span></div>
+              <div class="setup-cta">Get started</div>
+              <div class="setup-skip">Skip for now</div>
+            </div>
+          </div>
+          <div class="step-num" aria-hidden="true">1</div>
+          <h3 class="h3">Tell us about your car.</h3>
+          <p class="copy">Pick your fuel, tank size and search radius. It takes ten seconds and stays on your phone.</p>
+        </li>
+
+        <li class="step">
+          <div class="phone">
+            <div class="screen" role="img" aria-label="App screen: the Prices list, with the cheapest station first, the cost of a tank, and nearby stations below">
+              <!-- Drawn at the app's 390pt width, then scaled to the 240px screen -->
+              <div class="prices">
+                <div class="prices-head">
+                  <div class="prices-title">Cheapest near you</div>
+                  <div class="prices-search">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#b5b9c1" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>
+                    <span>SE20 7BS &nbsp;·&nbsp; Penge</span>
+                    <span class="prices-live">Live</span>
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#3ee36b" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v3M12 19v3M2 12h3M19 12h3"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2" fill="#3ee36b"/></svg>
+                  </div>
+                  <div class="prices-fuels">
+                    <span class="is-on">Unleaded E10</span><span>Super E5</span><span>Diesel</span>
+                    <span class="prices-filter"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#b5b9c1" stroke-width="1.8" stroke-linecap="round"><path d="M3 5h18M6 12h12M10 19h4"/></svg>Filter</span>
+                  </div>
+                </div>
+                <div class="prices-best">
+                  <div class="prices-station">
+                    <span class="brand" style="--brand-bg: #2a5a39; --brand-ink: #d7ffe2">PF</span>
+                    <span class="prices-name">Penge Fuel<small>0.4 mi away</small></span>
+                  </div>
+                  <div class="prices-best-foot">
+                    <span class="prices-delta">−6.0p/L</span>
+                    <span class="prices-price prices-price-big"><span class="unit">£</span>1.36<span class="unit tail">9</span></span>
+                  </div>
+                </div>
+                <!-- Cheapest price × the 50L tank picked in step 1 -->
+                <div class="prices-tank">
+                  <span class="prices-tank-label">Cost<br>per<br>tank (£)</span>
+                  <span><small>1/4</small>17.1</span>
+                  <span><small>1/2</small>34.2</span>
+                  <span><small>Full</small>68.5</span>
+                </div>
+                <div class="prices-list">
+                  <div class="prices-station">
+                    <span class="brand" style="--brand-bg: #3b3f6e; --brand-ink: #e6e7ff">AF</span>
+                    <span class="prices-name">Anerley Filling Station <span class="prices-area">· Anerley</span><small>1.1 mi &nbsp;·&nbsp; <em>Save 2.0p/L</em></small></span>
+                    <span class="prices-price"><span class="unit">£</span>1.40<span class="unit tail">9</span></span>
+                  </div>
+                  <div class="prices-station">
+                    <span class="brand" style="--brand-bg: #6e3b3b; --brand-ink: #ffe6e6">EE</span>
+                    <span class="prices-name">Elmers End Services<small>1.6 mi &nbsp;·&nbsp; <em>Save 1.0p/L</em></small></span>
+                    <span class="prices-price"><span class="unit">£</span>1.41<span class="unit tail">9</span></span>
+                  </div>
+                  <div class="prices-station">
+                    <span class="brand" style="--brand-bg: #3b5a6e; --brand-ink: #e6f4ff">KH</span>
+                    <span class="prices-name">Kent House Garage <span class="prices-area">· Beckenham</span><small>1.9 mi</small></span>
+                    <span class="prices-price"><span class="unit">£</span>1.42<span class="unit tail">9</span></span>
+                  </div>
+                  <div class="prices-station">
+                    <span class="brand" style="--brand-bg: #6e5a3b; --brand-ink: #fff3e0">SH</span>
+                    <span class="prices-name">Sydenham Hill Fuel<small>2.3 mi</small></span>
+                    <span class="prices-price"><span class="unit">£</span>1.44<span class="unit tail">9</span></span>
+                  </div>
+                </div>
+              </div>
+              <div class="app-tabs">
+                <span class="is-on"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M4 6h16M4 12h16M4 18h16"/></svg>Prices</span>
+                <span><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 4L3 6v14l6-2 6 2 6-2V4l-6 2-6-2z"/><path d="M9 4v14M15 6v14"/></svg>Map</span>
+                <span><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="3"/><circle cx="12" cy="12" r="8"/></svg>Settings</span>
+              </div>
+            </div>
+          </div>
+          <div class="step-num" aria-hidden="true">2</div>
+          <h3 class="h3">Open the map.</h3>
+          <p class="copy">See prices for stations around you, with the cheapest highlighted.</p>
+        </li>
+
+        <li class="step">
+          <div class="phone">
+            <div class="screen" role="img" aria-label="App screen: the cheapest station's card with its saving and a Route here button">
+              <svg aria-hidden="true" viewBox="830 200 480 1040" width="240" height="520"><rect x="0" y="0" width="2400" height="1400" fill="#181b23"/><path d="M1060 290 L1200 280 L1215 385 L1075 395 Z" fill="#172a1f"/><g stroke="#20242d" stroke-width="8" fill="none"><path d="M980 745 L1000 1010"/><path d="M1150 725 L1180 1010"/><path d="M1120 605 L1420 615"/><path d="M880 560 L900 425"/><path d="M1000 505 L1050 380"/><path d="M1060 560 L1240 575"/></g><g stroke="#333a46" stroke-width="16" fill="none" stroke-linecap="round"><path d="M640 690 C800 680 900 650 1000 660 C1150 675 1300 710 1500 730"/><path d="M900 655 C860 520 800 460 690 300"/><path d="M1260 702 C1280 500 1310 300 1380 -600"/></g><path d="M640 -600 C820 150 960 360 1080 470 C1250 620 1500 760 3000 1500" stroke="#434a56" stroke-width="7" fill="none"/></svg>
+              <div class="app-search"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#b5b9c1" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>Penge, SE20</div>
+              <div class="app-you"></div>
+              <div class="tag" style="left: 50px; top: 160px"><div class="tag-body"><span>£1.42<span class="tail">9</span></span></div><div class="tag-tip"></div></div>
+              <div class="tag" style="left: 196px; top: 170px"><div class="tag-body"><span>£1.44<span class="tail">9</span></span></div><div class="tag-tip"></div></div>
+              <div class="tag tag-cheap tag-selected" style="left: 130px; top: 262px"><div class="tag-body"><span>£1.36<span class="tail">9</span></span></div><div class="tag-tip"></div></div>
+              <div class="app-card">
+                <div class="station-card">
+                  <div class="station-head">
+                    <div class="station-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#3ee36b" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 21V5a2 2 0 012-2h6a2 2 0 012 2v16"/><path d="M3 21h14"/><path d="M15 9h2.5a1.5 1.5 0 011.5 1.5V16a1.5 1.5 0 003 0V8l-3-3"/></svg></div>
+                    <div class="station-info"><div class="station-name">Cheapest Unleaded E10</div><div class="station-meta">Penge · 0.4 mi away</div></div>
+                    <div class="station-price"><span class="unit">£</span><span class="big">1.36</span><span class="unit tail">9</span></div>
+                  </div>
+                  <div class="saving"><span class="saving-text">Saves 6.0p/L vs area avg</span><span class="saving-tank">~£3.00/tank</span></div>
+                  <div class="btn btn-primary btn-route"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#1a3020" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="M13 6l6 6-6 6"/></svg>Route here</div>
+                </div>
+              </div>
+              <div class="app-tabs">
+                <span><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M4 6h16M4 12h16M4 18h16"/></svg>Prices</span>
+                <span class="is-on"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 4L3 6v14l6-2 6 2 6-2V4l-6 2-6-2z"/><path d="M9 4v14M15 6v14"/></svg>Map</span>
+                <span><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="3"/><circle cx="12" cy="12" r="8"/></svg>Settings</span>
+              </div>
+            </div>
+          </div>
+          <div class="step-num" aria-hidden="true">3</div>
+          <h3 class="h3">Fill up and save.</h3>
+          <p class="copy">Tap a station to see its saving against the local average, then tap Route here to open Apple Maps.</p>
+        </li>
+      </ol>
+    </div>
+  </section>
+
+  <!-- Pricing -->
+  <section class="section" id="pricing" aria-labelledby="pricing-title">
+    <div class="wrap route">
+      <div class="free-card">
+        <div>
+          <p class="eyebrow">Pricing</p>
+          <h2 id="pricing-title" class="h2">Free to use.</h2>
+          <ul class="ticks">
+            <li><span class="tick"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#fbfbfb" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12l4 4 10-10"/></svg></span>No account</li>
+            <li><span class="tick"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#fbfbfb" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12l4 4 10-10"/></svg></span>No subscription</li>
+            <li><span class="tick"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#fbfbfb" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12l4 4 10-10"/></svg></span>Every nearby price for Unleaded E10, Super E5 and Diesel</li>
+          </ul>
+        </div>
+        <div class="free-vis" aria-hidden="true">
+          <svg viewBox="0 0 480 300" preserveAspectRatio="xMidYMid slice" fill="none"><path d="M-20 212 C120 196 260 220 500 184" stroke="#242932" stroke-width="16" stroke-linecap="round"/><path d="M150 -20 C170 90 200 180 230 320" stroke="#20242d" stroke-width="10"/><path d="M360 -20 C340 100 350 200 320 320" stroke="#20242d" stroke-width="8"/><path d="M60 -20 C80 100 70 220 110 320" stroke="#2b313b" stroke-width="4" stroke-dasharray="10 10"/><path d="M300 70 L400 60 L410 130 L310 140 Z" fill="#172a1f"/></svg>
+          <div class="free-pin">
+            <div class="free-tag">
+              <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#b5b9c1" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 21V5a2 2 0 012-2h6a2 2 0 012 2v16"/><path d="M3 21h14"/><path d="M15 9h2.5a1.5 1.5 0 011.5 1.5V16a1.5 1.5 0 003 0V8l-3-3"/></svg>
+              <span class="free-price"><span class="unit">£</span>0<span class="unit cents">.00</span></span>
+              <span class="free-rule"></span>
+              <span class="free-label">Free</span>
+            </div>
+            <div class="free-tip"></div>
+            <div class="free-fuels"><span>Unleaded E10</span><span>Super E5</span><span>Diesel</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ: if you change a question or answer, update the FAQPage JSON-LD in the <head> too -->
+  <section class="section band" id="faq" aria-labelledby="faq-title">
+    <div class="wrap route faq-grid">
+      <div class="faq-intro">
+        <p class="eyebrow">FAQ</p>
+        <h2 id="faq-title" class="h2">Common questions.</h2>
+        <p class="copy">Can't see yours? <a class="textlink" href="support.html">Visit Support</a>.</p>
+      </div>
+      <div>
+        <details class="faq-item" open>
+          <summary>Is Refuelr free?<span class="faq-icon" aria-hidden="true"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#fbfbfb" stroke-width="2.4" stroke-linecap="round"><path d="M5 12h14"/><path class="faq-plus" d="M12 5v14"/></svg></span></summary>
+          <p>Yes, Refuelr is free and shows one small banner ad. No account or subscription.</p>
+        </details>
+        <details class="faq-item" open>
+          <summary>Where do the prices come from?<span class="faq-icon" aria-hidden="true"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#fbfbfb" stroke-width="2.4" stroke-linecap="round"><path d="M5 12h14"/><path class="faq-plus" d="M12 5v14"/></svg></span></summary>
+          <p>Prices come from the UK government's <a class="textlink" href="https://www.gov.uk/government/collections/fuel-finder" target="_blank" rel="noopener">Fuel Finder</a> scheme, which requires forecourts to publish their prices. Refuelr refreshes them every few hours.</p>
+        </details>
+        <details class="faq-item">
+          <summary>How up to date are the prices?<span class="faq-icon" aria-hidden="true"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#fbfbfb" stroke-width="2.4" stroke-linecap="round"><path d="M5 12h14"/><path class="faq-plus" d="M12 5v14"/></svg></span></summary>
+          <p>Refuelr refreshes prices every few hours and shows the latest price each station has reported. A forecourt can change its price between refreshes, so the price at the pump is the one that counts.</p>
+        </details>
+        <details class="faq-item">
+          <summary>Which fuels does Refuelr cover?<span class="faq-icon" aria-hidden="true"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#fbfbfb" stroke-width="2.4" stroke-linecap="round"><path d="M5 12h14"/><path class="faq-plus" d="M12 5v14"/></svg></span></summary>
+          <p>Unleaded E10, Super E5 and Diesel.</p>
+        </details>
+        <details class="faq-item">
+          <summary>Does it work everywhere in the UK?<span class="faq-icon" aria-hidden="true"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#fbfbfb" stroke-width="2.4" stroke-linecap="round"><path d="M5 12h14"/><path class="faq-plus" d="M12 5v14"/></svg></span></summary>
+          <p>Refuelr shows forecourts across the UK that report their prices to Fuel Finder. Search within 1, 2, 5, 10 or 20 miles of where you are, or of any postcode or town.</p>
+        </details>
+        <details class="faq-item">
+          <summary>Do you track my location?<span class="faq-icon" aria-hidden="true"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#fbfbfb" stroke-width="2.4" stroke-linecap="round"><path d="M5 12h14"/><path class="faq-plus" d="M12 5v14"/></svg></span></summary>
+          <p>No. If you allow it, Refuelr uses your location to find stations near you. It isn't stored or used to build a history of where you've been, and you can search by postcode or town instead. The <a class="textlink" href="privacy.html">Privacy Policy</a> explains what the app's ad provider collects.</p>
+        </details>
+        <details class="faq-item">
+          <summary>Do I need an account?<span class="faq-icon" aria-hidden="true"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#fbfbfb" stroke-width="2.4" stroke-linecap="round"><path d="M5 12h14"/><path class="faq-plus" d="M12 5v14"/></svg></span></summary>
+          <p>No. Your fuel, tank size and other settings stay on your phone.</p>
+        </details>
+        <details class="faq-item">
+          <summary>A price looks wrong. What should I do?<span class="faq-icon" aria-hidden="true"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#fbfbfb" stroke-width="2.4" stroke-linecap="round"><path d="M5 12h14"/><path class="faq-plus" d="M12 5v14"/></svg></span></summary>
+          <p>Prices are reported by the retailers and can change before the next refresh. If one still looks wrong, <a class="textlink" href="mailto:hello@squaredmc.com">email us</a> with the station and the price you saw, and we'll look into it.</p>
+        </details>
+        <details class="faq-item">
+          <summary>How is the saving worked out?<span class="faq-icon" aria-hidden="true"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#fbfbfb" stroke-width="2.4" stroke-linecap="round"><path d="M5 12h14"/><path class="faq-plus" d="M12 5v14"/></svg></span></summary>
+          <p>Refuelr takes the difference between a station's price and the local average for your fuel, then multiplies it by your tank size. 6p a litre less on a 50-litre tank is about £3.00.</p>
+        </details>
+        <details class="faq-item">
+          <summary>Does Refuelr show EV charging?<span class="faq-icon" aria-hidden="true"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#fbfbfb" stroke-width="2.4" stroke-linecap="round"><path d="M5 12h14"/><path class="faq-plus" d="M12 5v14"/></svg></span></summary>
+          <p>No. Refuelr covers Unleaded E10, Super E5 and Diesel.</p>
+        </details>
+        <details class="faq-item">
+          <summary>Is Refuelr on Android?<span class="faq-icon" aria-hidden="true"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#fbfbfb" stroke-width="2.4" stroke-linecap="round"><path d="M5 12h14"/><path class="faq-plus" d="M12 5v14"/></svg></span></summary>
+          <p>Not at the moment. Refuelr is for iPhone.</p>
+        </details>
+        <details class="faq-item">
+          <summary>How do I get support?<span class="faq-icon" aria-hidden="true"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#fbfbfb" stroke-width="2.4" stroke-linecap="round"><path d="M5 12h14"/><path class="faq-plus" d="M12 5v14"/></svg></span></summary>
+          <p>Visit the <a class="textlink" href="support.html">Support page</a> or email <a class="textlink" href="mailto:hello@squaredmc.com">hello@squaredmc.com</a>.</p>
+        </details>
+      </div>
+    </div>
+  </section>
+
+  <!-- About -->
+  <section class="section" id="about" aria-labelledby="about-title">
+    <div class="wrap route split">
+      <div>
+        <p class="eyebrow">About</p>
+        <h2 id="about-title" class="h2">Built by SquaredMc.</h2>
+        <p class="lede">Refuelr is built by SquaredMc, the small UK studio.</p>
+        <p class="lede">Prices for the same fuel can differ by several pence a litre within a few miles, and new government price data finally makes that visible.</p>
+      </div>
+      <div class="board-wrap" aria-hidden="true">
+        <div class="board">
+          <div class="board-logo"><img src="assets/icons/logo.png" alt="" width="109" height="24"></div>
+          <div class="board-rows">
+            <div class="board-row is-cheapest">Unleaded E10<strong>136.9</strong></div>
+            <div class="board-row">Super E5<strong>151.9</strong></div>
+            <div class="board-row">Diesel<strong>144.9</strong></div>
+          </div>
+          <p class="board-note">Illustrative prices</p>
+        </div>
+        <div class="board-post"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Download -->
+  <section class="section section-flush" id="download" aria-labelledby="download-title">
+    <div class="wrap">
+      <div class="cta-card">
+        <img class="cta-icon" src="assets/icons/app-icon.png" alt="" width="88" height="88">
+        <h2 id="download-title" class="h2">Download Refuelr, free.</h2>
+        <p class="lede">Coming soon to iPhone.</p>
+        <div class="cta-actions">
+          <!-- At launch, replace this span with Apple's official badge (unmodified, at least 40px tall):
+          <a class="app-store-badge" href="https://apps.apple.com/gb/app/refuelr/idAPP_STORE_ID"><img src="assets/icons/app-store-badge.svg" alt="Download on the App Store" width="156" height="52"></a> -->
+          <span class="btn btn-secondary is-static">Coming soon to the App Store</span>
+        </div>
+        <p class="cta-credit">Built by SquaredMc</p>
+        <div class="cta-strip" aria-hidden="true">
+          <svg viewBox="0 0 1200 150" preserveAspectRatio="xMidYMax slice" fill="none"><path d="M-20 110 C300 90 600 120 1220 80" stroke="#2b313c" stroke-width="14"/><path d="M380 160 C420 100 470 60 520 -10" stroke="#262b35" stroke-width="10"/><path d="M820 160 C800 100 790 40 760 -10" stroke="#262b35" stroke-width="10"/></svg>
+          <div class="tag tag-faint" style="left: 14%; top: 92px; --k: 0.8"><div class="tag-body"><span>£1.44<span class="tail">9</span></span></div></div>
+          <div class="tag wide-only" style="left: 32%; top: 70px; --k: 0.9"><div class="tag-body"><span>£1.42<span class="tail">9</span></span></div></div>
+          <div class="tag tag-cheap" style="left: 50%; top: 104px"><div class="tag-body"><span>£1.36<span class="tail">9</span></span><span class="tag-rule"></span><span class="tag-label">Cheapest</span></div></div>
+          <div class="tag wide-only" style="left: 68%; top: 64px; --k: 0.9"><div class="tag-body"><span>£1.40<span class="tail">9</span></span></div></div>
+          <div class="tag tag-faint" style="left: 86%; top: 96px; --k: 0.8"><div class="tag-body"><span>£1.45<span class="tail">9</span></span></div></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <div class="footer-row">
+      <a class="logo" href="#top" aria-label="Refuelr home">
+        <img src="assets/icons/logo.png" alt="Refuelr" width="127" height="28">
+      </a>
+      <nav aria-label="Footer">
+        <ul class="footer-links">
+          <li><a href="#how">How it works</a></li>
+          <li><a href="#faq">FAQ</a></li>
+          <li><a href="support.html">Support</a></li>
+          <li><a href="privacy.html">Privacy Policy</a></li>
+          <li><a href="terms.html">Terms of Use</a></li>
+          <li><a href="support.html#contact">Contact</a></li>
+        </ul>
+      </nav>
+    </div>
+    <div class="footer-legal">
+      <p>Fuel price data: Contains public sector information licensed under the <a class="textlink" href="https://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/" target="_blank" rel="noopener">Open Government Licence v3.0</a>.</p>
+      <p>© 2026 Refuelr, built by SquaredMc Ltd. Registered in England and Wales, company no. 16175464. Registered office: 17 Poole Road, Epsom, KT19 9SQ. Prices are reported by retailers and can change before you arrive. Refuelr does not guarantee any saving.</p>
+    </div>
+  </div>
+</footer>
+
+<script src="js/main.js"></script>
+</body>
+</html>

@@ -1,0 +1,91 @@
+/**
+ * Refuelr design tokens — colours and type from the app's src/theme/index.js
+ * (SquaredMc/Refuelr). Spacing, radius and type scale are kept identical to the
+ * Netti website so the two sites read as siblings.
+ */
+:root {
+  color-scheme: dark;
+
+  /* App theme (THEME) */
+  --rf-color-bg: #15181f;
+  --rf-color-surface: #1e222b;
+  --rf-color-surface-2: #272c37;
+  --rf-color-line: #353c46;
+  --rf-color-ink: #fbfbfb;
+  --rf-color-ink-sub: #b5b9c1;
+  --rf-color-ink-mute: #8a8f9a;      /* app inkMute #7e838e, lifted for 4.5:1 on surface */
+
+  /* Accent (ACCENTS['#3ee36b']) */
+  --rf-color-accent: #3ee36b;
+  --rf-color-accent-ink: #1a3020;
+  --rf-color-accent-glow: rgba(62, 227, 107, 0.45);
+  --rf-color-accent-soft: rgba(62, 227, 107, 0.12);
+
+  /* Amber accent (ACCENTS['#ffb547']), used for costs */
+  --rf-color-amber: #ffb547;
+
+  /* Splash background */
+  --rf-color-deep: #0a0b0e;
+
+  /* Logo gradient (assets/onboarding/wordmark.svg) */
+  --rf-color-flame-start: #f7ff00;
+  --rf-color-flame-end: #ff8800;
+
+  --rf-radius-sm: 3px;
+  --rf-radius-md: 6px;
+  --rf-radius-lg: 9px;
+  --rf-radius-segment: 12px;
+  --rf-radius-container: 20px;       /* app Section cards */
+  --rf-radius-pill: 24px;
+  --rf-radius-full: 9999px;
+
+  --rf-space-2: 2px;
+  --rf-space-4: 4px;
+  --rf-space-8: 8px;
+  --rf-space-12: 12px;
+  --rf-space-16: 16px;
+  --rf-space-20: 20px;
+  --rf-space-24: 24px;
+  --rf-space-32: 32px;
+  --rf-space-40: 40px;
+  --rf-space-48: 48px;
+
+  --rf-shadow-card: 0 1px 2px -1px rgba(0, 0, 0, 0.4), 0 1px 3px 0 rgba(0, 0, 0, 0.4);
+
+  --rf-font-display: Raleway, system-ui, -apple-system, 'Segoe UI', Roboto, Arial, sans-serif;
+  --rf-font-body: Rubik, system-ui, -apple-system, 'Segoe UI', Roboto, Arial, sans-serif;
+  --rf-font-weight-regular: 400;
+  --rf-font-weight-medium: 500;
+  --rf-font-weight-semibold: 600;
+  --rf-font-weight-display: 800;
+
+  --rf-font-size-h1: 52px;
+  --rf-font-size-h2: 36px;
+  --rf-font-size-h3: 20px;
+  --rf-font-size-lg: 24px;
+  --rf-font-size-md-sb: 18px;
+  --rf-font-size-md: 16px;
+  --rf-font-size-sm: 14px;
+  --rf-font-size-caption: 12px;
+
+  --rf-font-line-height-h3: 28px;
+  --rf-font-line-height-md-sb: 28px;
+
+  /* Marketing-site-only tokens */
+  --rf-web-maxw: 1248px;             /* includes the 48px side gutters */
+  --rf-web-maxw-legal: 760px;
+  --rf-web-section-y: 96px;
+  --rf-web-section-y-sm: 56px;
+  --rf-color-bg-alt: #181b23;        /* alternate section band and map background */
+
+  /* Homepage design (Claude Design, Homepage — 1440) */
+  --rf-color-divider: #222731;       /* header, footer and band rules */
+  --rf-color-line-subtle: #262b35;   /* rules inside illustrations */
+  --rf-color-line-strong: #4b5360;   /* secondary button hover */
+  --rf-color-footer: #111318;
+  --rf-color-accent-hover: #63ee88;
+  --rf-color-callout: #1c1f27;        /* station card, as in the app */
+  --rf-color-location: #2e8bff;      /* "you are here" dot */
+  --rf-color-bezel: #0b0d11;         /* phone frames */
+  --rf-color-board: #0d0f13;         /* forecourt price board */
+}
