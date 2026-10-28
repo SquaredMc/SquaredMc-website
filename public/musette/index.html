@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<!-- Content draft for the homepage, built before the Claude Design pass: the sections and copy are meant to
+     be final, the layout and visuals are placeholders in the app's tokens for Claude Design to replace. -->
+<html lang="en-GB">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Musette — Which Zwift workout to ride today, and why</title>
+<meta name="description" content="Musette reads your rides, sleep and recovery from Apple Health, counts down to the event you're training for, and picks one Zwift workout each morning, with the reason. For iPhone, free during the beta.">
+<link rel="canonical" href="https://squaredmc.com/musette/">
+<!-- Not launched yet: remove at launch so search engines can index the site -->
+<meta name="robots" content="noindex">
+<meta name="theme-color" content="#F5FAF7" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0E2622" media="(prefers-color-scheme: dark)">
+<!-- At launch, once the App Store ID exists: -->
+<!-- <meta name="apple-itunes-app" content="app-id=APP_STORE_ID"> -->
+
+<meta property="og:type" content="website">
+<meta property="og:title" content="Musette — Which Zwift workout to ride today, and why">
+<meta property="og:description" content="One workout each morning, picked from your training and recovery in Apple Health and the event you're training for.">
+<meta property="og:url" content="https://squaredmc.com/musette/">
+<meta property="og:site_name" content="Musette">
+<meta property="og:locale" content="en_GB">
+<!-- og:image and twitter:image arrive with the homepage design -->
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Musette — Which Zwift workout to ride today, and why">
+<meta name="twitter:description" content="One workout each morning, picked from your training and recovery in Apple Health and the event you're training for.">
+
+<link rel="icon" type="image/svg+xml" href="assets/icons/favicon.svg">
+<link rel="icon" type="image/png" sizes="32x32" href="assets/icons/favicon-32.png">
+<link rel="apple-touch-icon" href="assets/icons/apple-touch-icon.png">
+<link rel="preload" href="fonts/Manrope-VariableFont_wght.ttf" as="font" type="font/ttf" crossorigin>
+<link rel="stylesheet" href="css/tokens.css">
+<link rel="stylesheet" href="css/styles.css">
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  "name": "Musette",
+  "operatingSystem": "iOS 17 or later",
+  "applicationCategory": "HealthApplication",
+  "description": "Picks which Zwift workout to ride today, with the reason, from your training and recovery in Apple Health and the event you're training for.",
+  "url": "https://squaredmc.com/musette/",
+  "publisher": {
+    "@type": "Organization",
+    "name": "SQUAREDMC LTD",
+    "url": "https://squaredmc.com/"
+  }
+}
+</script>
+</head>
+<body>
+
+<a class="skip-link" href="#main">Skip to content</a>
+
+<header class="site-header">
+  <div class="wrap header-row">
+    <a class="logo" href="#top" aria-label="Musette home">
+      <img src="assets/icons/favicon.svg" alt="" width="32" height="32">Musette
+    </a>
+    <nav class="nav" aria-label="Main">
+      <a class="navlink" href="#how">How it works</a>
+      <a class="navlink" href="#week">Your week</a>
+      <a class="navlink" href="#privacy">Privacy</a>
+      <a class="navlink" href="#faq">FAQ</a>
+      <a class="navlink" href="../">SquaredMc</a>
+      <a class="btn btn-primary btn-small" href="#download">Get the app</a>
+    </nav>
+    <button class="menu-toggle" type="button" aria-label="Menu" aria-expanded="false" aria-controls="mobile-menu">
+      <svg class="icon-open" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16"/><path d="M4 12h16"/><path d="M4 17h16"/></svg>
+      <svg class="icon-close" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12"/><path d="M18 6L6 18"/></svg>
+    </button>
+  </div>
+  <nav id="mobile-menu" class="mobile-menu" aria-label="Mobile">
+    <a class="navlink" href="#how">How it works</a>
+    <a class="navlink" href="#week">Your week</a>
+    <a class="navlink" href="#privacy">Privacy</a>
+    <a class="navlink" href="#faq">FAQ</a>
+    <a class="navlink" href="../">SquaredMc</a>
+    <a class="btn btn-primary" href="#download">Get the app</a>
+    <p class="mobile-menu-note">Free during the beta. No account needed.</p>
+  </nav>
+</header>
+
+<main id="main">
+
+  <section class="hero" id="top" aria-labelledby="hero-title">
+    <div class="wrap hero-grid">
+      <div class="hero-copy">
+        <p class="eyebrow">For riders training for an event</p>
+        <h1 id="hero-title">Which Zwift workout to ride today, and why.</h1>
+        <p class="lede">
+          Musette reads your rides, sleep and recovery from Apple Health, counts down to the event you're training
+          for, and picks one workout each morning, with the reason in a sentence.
+        </p>
+        <div class="hero-actions">
+          <a class="btn btn-primary" href="#download">Ask for a beta invite</a>
+          <a class="btn btn-on-hero" href="#how">How it works</a>
+        </div>
+        <p class="hero-note">Free during the beta &nbsp;·&nbsp; iPhone with iOS 17 or later</p>
+      </div>
+      <div class="hero-phone">
+        <div class="phone">
+          <picture>
+            <source srcset="assets/screens/today-workout-dark.jpg" media="(prefers-color-scheme: dark)">
+            <img src="assets/screens/today-workout-light.jpg" width="598" height="1300"
+                 alt="Musette's Today screen: 60 minutes available, today's pick is an endurance workout, with the reason &quot;Build phase, hard ride yesterday: endurance today.&quot;">
+          </picture>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="reason" aria-labelledby="reason-title">
+    <div class="wrap">
+      <div class="section-head">
+        <p class="eyebrow">Every morning</p>
+        <h2 id="reason-title">One workout. One reason.</h2>
+        <p class="copy">
+          No plan to fall behind on. Musette looks at what you've ridden, how you've slept and recovered, and how far
+          away your event is, then picks a single session and tells you why. Some days the answer is rest.
+        </p>
+      </div>
+      <ul class="pick-cards" role="list">
+        <li class="pick-card">
+          <span class="pick-label">Today's pick</span>
+          <span class="pick-title">Sweet spot</span>
+          <p class="pick-reason">Build phase, fresh legs and 3 days since your last hard ride: sweet spot today.</p>
+        </li>
+        <li class="pick-card">
+          <span class="pick-label">Today's pick</span>
+          <span class="pick-title">Short openers</span>
+          <p class="pick-reason">Taper week, 4 days to Hill Climb Classic, fresh legs and 3 days since your last hard ride: short openers today.</p>
+        </li>
+        <li class="pick-card">
+          <span class="pick-label">Today's pick</span>
+          <span class="pick-title">Rest day</span>
+          <p class="pick-reason">Recovery is low (HRV is below your baseline, sleep was short), so a rest day today.</p>
+        </li>
+      </ul>
+    </div>
+  </section>
+
+  <section class="section band" id="how" aria-labelledby="how-title">
+    <div class="wrap">
+      <div class="section-head">
+        <p class="eyebrow">How it works</p>
+        <h2 id="how-title">Three steps, then ride.</h2>
+      </div>
+      <ol class="steps" role="list">
+        <li class="step">
+          <span class="step-number">01</span>
+          <h3>Connect Apple Health</h3>
+          <p>
+            Musette reads your workouts, heart rate, power, HRV, resting heart rate and sleep. Rides reach Apple Health
+            from Zwift, an Apple Watch, Garmin, Wahoo or Strava.
+          </p>
+        </li>
+        <li class="step">
+          <span class="step-number">02</span>
+          <h3>Set your event</h3>
+          <p>
+            Give it a name and a date, and say what kind it is: sportive or gran fondo, road race or crit, hilly event,
+            or time trial. No event yet? Just keep fit.
+          </p>
+        </li>
+        <li class="step">
+          <span class="step-number">03</span>
+          <h3>Ride today's pick</h3>
+          <p>
+            Open Zwift from Musette and find the workout where it says, such as Workouts › Endurance. The ride goes
+            back into Apple Health and counts towards tomorrow's pick.
+          </p>
+        </li>
+      </ol>
+    </div>
+  </section>
+
+  <section class="section" id="week" aria-labelledby="week-title">
+    <div class="wrap split">
+      <div class="split-copy">
+        <p class="eyebrow">The week ahead</p>
+        <h2 id="week-title">Plan the week around the weather and your diary.</h2>
+        <p class="copy">
+          The Week tab looks ten days ahead and books time to ride. Give it an approximate location and it uses Apple
+          Weather to move key sessions indoors when it's wet and put long rides on dry days.
+        </p>
+        <ul class="ticks" role="list">
+          <li>Fits rides around the busy times in your calendar, then adds them to a Training calendar.</li>
+          <li>Each morning's pick still names the workout, from how you are that day.</li>
+          <li>An optional reminder on Sunday evening when your week is ready.</li>
+        </ul>
+      </div>
+      <div class="split-media">
+        <div class="phone">
+          <picture>
+            <source srcset="assets/screens/week-dark.jpg" media="(prefers-color-scheme: dark)">
+            <img src="assets/screens/week-light.jpg" width="598" height="1300" loading="lazy"
+                 alt="Musette's Week tab: rain on Wednesday moves the key session indoors, and today's endurance ride is outside.">
+          </picture>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section band" id="goal" aria-labelledby="goal-title">
+    <div class="wrap split split-reverse">
+      <div class="split-copy">
+        <p class="eyebrow">Your goal</p>
+        <h2 id="goal-title">Counting down to the start line.</h2>
+        <p class="copy">
+          Musette knows where you are in the build: base, build, peak, taper and event day. The phase shapes each
+          pick, and the fitness trend shows your training load over the last six weeks.
+        </p>
+      </div>
+      <div class="split-media">
+        <div class="phone">
+          <picture>
+            <source srcset="assets/screens/goal-event-dark.jpg" media="(prefers-color-scheme: dark)">
+            <img src="assets/screens/goal-event-light.jpg" width="598" height="1300" loading="lazy"
+                 alt="Musette's Goal tab: 45 days to the Dragon Ride, in the build phase.">
+          </picture>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="widget" aria-labelledby="widget-title">
+    <div class="wrap split">
+      <div class="split-copy">
+        <p class="eyebrow">Home Screen</p>
+        <h2 id="widget-title">Today's pick, without opening the app.</h2>
+        <p class="copy">
+          The small widget shows the workout and how long it takes. The medium one adds the reason.
+        </p>
+      </div>
+      <div class="split-media widgets" aria-hidden="true">
+        <div class="widget widget-small">
+          <span class="widget-label">Today</span>
+          <span class="widget-title">Endurance</span>
+          <span class="widget-minutes">60<small>min</small></span>
+        </div>
+        <div class="widget widget-medium">
+          <span class="widget-label">Today</span>
+          <span class="widget-title">Endurance</span>
+          <span class="widget-minutes">60<small>min</small></span>
+          <p class="widget-reason">Build phase, hard ride yesterday: endurance today.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section hero-band" id="privacy" aria-labelledby="privacy-title">
+    <div class="wrap">
+      <div class="section-head">
+        <p class="eyebrow">Privacy</p>
+        <h2 id="privacy-title">Your training stays on your iPhone.</h2>
+      </div>
+      <ul class="privacy-grid" role="list">
+        <li>
+          <h3>No account, no server</h3>
+          <p>There's nothing to sign up for, and no Musette server to send your data to.</p>
+        </li>
+        <li>
+          <h3>Reads Health, never writes</h3>
+          <p>Musette reads Apple Health on your iPhone. Your Health data isn't sent to us or anyone else.</p>
+        </li>
+        <li>
+          <h3>A rough location, for weather</h3>
+          <p>For the forecast, a location rounded to about a kilometre goes to Apple Weather.</p>
+        </li>
+        <li>
+          <h3>No ads, no tracking</h3>
+          <p>No adverts, no analytics and nothing that follows you around other apps.</p>
+        </li>
+      </ul>
+      <p class="privacy-note">
+        Sessions you add to your calendar sync with your calendar account, like your other events.
+        <a href="privacy.html">Read the privacy policy</a>
+      </p>
+    </div>
+  </section>
+
+  <section class="section" id="faq" aria-labelledby="faq-title">
+    <div class="wrap faq-grid">
+      <div class="faq-intro">
+        <p class="eyebrow">FAQ</p>
+        <h2 id="faq-title">Common questions.</h2>
+        <p class="copy">Can't see yours? <a href="support.html">Visit Support</a>.</p>
+      </div>
+      <div>
+        <details class="faq-item" open>
+          <summary>Is Musette a coach or a training plan?</summary>
+          <p>
+            No. It picks one workout a day from a library of Zwift workouts, using fixed rules applied to your training,
+            recovery and event date. It can't see how you feel, so you decide whether to ride it.
+          </p>
+        </details>
+        <details class="faq-item">
+          <summary>Do I need Zwift?</summary>
+          <p>
+            For indoor workouts, yes. Musette suggests workouts from Zwift's library and opens the Zwift app, which needs
+            its own account and subscription. On a dry day it may suggest riding outside instead.
+          </p>
+        </details>
+        <details class="faq-item">
+          <summary>Does it open the workout in Zwift?</summary>
+          <p>
+            It opens Zwift and tells you where to find the workout, such as Workouts › Endurance. It can't start a
+            workout for you.
+          </p>
+        </details>
+        <details class="faq-item">
+          <summary>Do I need a power meter?</summary>
+          <p>
+            No. With power and your FTP, Musette works out each ride's load from power. Without them it uses heart rate,
+            and failing that, how long you rode.
+          </p>
+        </details>
+        <details class="faq-item">
+          <summary>What does it read from Apple Health?</summary>
+          <p>
+            Workouts, heart rate, cycling power, cycling distance, resting heart rate, heart rate variability, sleep, and
+            your date of birth. It never writes to Apple Health.
+          </p>
+        </details>
+        <details class="faq-item">
+          <summary>Does anything leave my phone?</summary>
+          <p>
+            An approximate location goes to Apple Weather for the forecast. If you add sessions to your calendar, they
+            sync with your calendar account. Nothing is sent to us. The <a href="privacy.html">Privacy Policy</a> has
+            the details.
+          </p>
+        </details>
+        <details class="faq-item">
+          <summary>What does it cost?</summary>
+          <p>Musette is free during the beta, with no ads, in-app purchases or subscription.</p>
+        </details>
+        <details class="faq-item">
+          <summary>What do I need?</summary>
+          <p>An iPhone with iOS 17 or later, your rides in Apple Health, and Zwift for the indoor workouts.</p>
+        </details>
+        <details class="faq-item">
+          <summary>Is it medical advice?</summary>
+          <p>
+            No. Musette's picks are training suggestions. If you feel unwell, rest and see a doctor, whatever the app
+            suggests.
+          </p>
+        </details>
+        <details class="faq-item">
+          <summary>Is Musette made by Zwift?</summary>
+          <p>No. Musette is made by SquaredMc, and isn't affiliated with or endorsed by Zwift, Inc.</p>
+        </details>
+      </div>
+    </div>
+  </section>
+
+  <section class="section section-flush" id="download" aria-labelledby="download-title">
+    <div class="wrap">
+      <div class="cta-card">
+        <img class="cta-icon" src="assets/icons/favicon.svg" alt="" width="88" height="88">
+        <h2 id="download-title">Musette is in private beta.</h2>
+        <p class="lede">
+          We're inviting riders who are training for an event. Tell us what you're training for and what you ride with,
+          and we'll be in touch.
+        </p>
+        <div class="cta-actions">
+          <a class="btn btn-primary" href="mailto:hello@squaredmc.com?subject=Musette%20beta&amp;body=The%20event%20I%27m%20training%20for%3A%0D%0AWhen%20it%20is%3A%0D%0AWhat%20I%20record%20my%20rides%20with%3A%0D%0AMy%20iPhone%20model%3A%0D%0A">Ask for an invite</a>
+          <!-- At launch, replace this span with Apple's official badge (unmodified, at least 40px tall):
+          <a class="app-store-badge" href="https://apps.apple.com/gb/app/musette/idAPP_STORE_ID"><img src="assets/icons/app-store-badge.svg" alt="Download on the App Store" width="156" height="52"></a> -->
+          <span class="btn btn-on-hero is-static">Coming soon to the App Store</span>
+        </div>
+        <p class="cta-note">Free during the beta &nbsp;·&nbsp; iPhone with iOS 17 or later</p>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <div class="footer-row">
+      <a class="logo" href="#top" aria-label="Musette home">
+        <img src="assets/icons/favicon.svg" alt="" width="32" height="32">Musette
+      </a>
+      <nav aria-label="Footer">
+        <ul class="footer-links">
+          <li><a href="#how">How it works</a></li>
+          <li><a href="#faq">FAQ</a></li>
+          <li><a href="support.html">Support</a></li>
+          <li><a href="privacy.html">Privacy Policy</a></li>
+          <li><a href="terms.html">Terms of Use</a></li>
+          <li><a href="support.html#contact">Contact</a></li>
+          <li><a href="../">SquaredMc</a></li>
+        </ul>
+      </nav>
+    </div>
+    <div class="footer-legal">
+      <p>Musette's picks are training suggestions, not medical advice. Musette is independent and isn't affiliated with or endorsed by Zwift, Inc. Zwift is a trademark of Zwift, Inc.</p>
+      <p>© 2026 Musette, built by SquaredMc Ltd. Registered in England and Wales, company no. 16175464. Registered office: 17 Poole Road, Epsom, KT19 9SQ.</p>
+    </div>
+  </div>
+</footer>
+
+<script src="js/main.js"></script>
+</body>
+</html>
