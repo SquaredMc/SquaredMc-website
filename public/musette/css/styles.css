@@ -1,0 +1,486 @@
+/*
+ * Shared styles for the Musette pages. The structure follows public/refuelr/
+ * (header, legal pages, footer, 404); colours, type and spacing come from
+ * tokens.css, the app's own tokens. The homepage adds its styles in Phase 3.
+ *
+ * Lilac (--ms-accent-decisive) is the app's one decisive accent: primary
+ * buttons, lilac fill with pine text. It never appears as text on Glacier.
+ */
+
+/* Fonts: served from this site rather than Google Fonts, so visiting a
+   Musette page sends nothing to a third party. Both are SIL OFL 1.1 with no
+   Reserved Font Name; the licences are in fonts/. */
+@font-face {
+  font-family: Manrope;
+  src: url("../fonts/Manrope-VariableFont_wght.ttf") format("truetype");
+  font-weight: 200 800;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "DM Mono";
+  src: url("../fonts/DMMono-Regular.ttf") format("truetype");
+  font-weight: 400;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "DM Mono";
+  src: url("../fonts/DMMono-Medium.ttf") format("truetype");
+  font-weight: 500;
+  font-display: swap;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: calc(var(--ms-web-header-h) + var(--ms-space-lg));
+}
+
+body {
+  margin: 0;
+  font-family: var(--ms-body-body-font);
+  font-size: var(--ms-body-body-size);
+  line-height: 1.55;
+  color: var(--ms-text-primary);
+  background: var(--ms-background-primary);
+  -webkit-font-smoothing: antialiased;
+  overflow-wrap: break-word;
+}
+
+a {
+  color: var(--ms-accent-interactive);
+  text-underline-offset: 3px;
+}
+
+img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+
+:focus-visible {
+  outline: var(--ms-stroke-bold) solid var(--ms-text-primary);
+  outline-offset: 3px;
+}
+
+.skip-link {
+  position: absolute;
+  left: var(--ms-space-lg);
+  top: -100px;
+  z-index: 40;
+  background: var(--ms-accent-decisive);
+  color: var(--ms-text-on-decisive);
+  padding: var(--ms-space-sm) var(--ms-space-lg);
+  border-radius: var(--ms-radius-pill);
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.skip-link:focus {
+  top: var(--ms-space-md);
+}
+
+.wrap {
+  max-width: var(--ms-web-maxw);
+  margin: 0 auto;
+  padding: 0 var(--ms-space-4xl);
+}
+
+.legal-wrap {
+  max-width: var(--ms-web-maxw-legal);
+  margin: 0 auto;
+  padding: 0 var(--ms-space-2xl);
+}
+
+/* The app's SectionLabel: DM Mono, upper case, tracked out */
+.eyebrow {
+  display: block;
+  margin: 0;
+  font-family: var(--ms-label-mono-font);
+  font-weight: var(--ms-label-mono-weight);
+  font-size: var(--ms-label-mono-size);
+  line-height: var(--ms-label-mono-line-height);
+  letter-spacing: var(--ms-label-mono-tracking);
+  text-transform: uppercase;
+  color: var(--ms-text-secondary);
+}
+
+h1,
+h2,
+h3 {
+  margin: 0;
+  color: var(--ms-text-primary);
+  text-wrap: balance;
+}
+
+h1 {
+  font-family: var(--ms-display-large-font);
+  font-weight: var(--ms-display-large-weight);
+  font-size: clamp(var(--ms-display-large-size), 3vw + 1.25rem, 48px);
+  line-height: 1.12;
+  letter-spacing: var(--ms-display-large-tracking);
+}
+
+h2 {
+  font-family: var(--ms-display-title-2-font);
+  font-weight: var(--ms-display-title-2-weight);
+  font-size: var(--ms-display-title-2-size);
+  line-height: var(--ms-display-title-2-line-height);
+  letter-spacing: var(--ms-display-title-2-tracking);
+}
+
+h3 {
+  font-family: var(--ms-display-headline-font);
+  font-weight: var(--ms-display-headline-weight);
+  font-size: var(--ms-display-headline-size);
+  line-height: var(--ms-display-headline-line-height);
+  letter-spacing: var(--ms-display-headline-tracking);
+}
+
+p {
+  margin: 0;
+  color: var(--ms-text-secondary);
+}
+
+/* Buttons: the app's PrimaryButton and SecondaryButton */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--ms-space-sm);
+  min-height: 52px;
+  padding: 0 var(--ms-space-2xl);
+  border: 0;
+  border-radius: var(--ms-radius-pill);
+  font-family: var(--ms-display-headline-font);
+  font-size: var(--ms-display-headline-size);
+  font-weight: var(--ms-display-headline-weight);
+  letter-spacing: var(--ms-display-headline-tracking);
+  text-decoration: none;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: filter 0.15s ease, transform 0.15s ease;
+}
+
+.btn-primary {
+  background: var(--ms-accent-decisive);
+  color: var(--ms-text-on-decisive);
+}
+
+.btn-primary:hover {
+  filter: brightness(1.06);
+}
+
+.btn-primary:active {
+  transform: translateY(1px);
+}
+
+.btn-secondary {
+  background: transparent;
+  color: var(--ms-text-primary);
+  border: var(--ms-stroke-regular) solid var(--ms-border-strong);
+}
+
+.btn-secondary:hover {
+  background: var(--ms-surface-sunken);
+}
+
+.btn-small {
+  min-height: 44px;
+  padding: 0 18px;
+  font-size: 15px;
+}
+
+/* Header */
+.site-header {
+  position: sticky;
+  top: 0;
+  z-index: 30;
+  background: var(--ms-background-primary);
+  border-bottom: var(--ms-stroke-hairline) solid var(--ms-border-subtle);
+}
+
+.header-row {
+  height: var(--ms-web-header-h);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--ms-space-lg);
+}
+
+/* Interim wordmark: the app icon and "Musette" set in Manrope, until there's a logo */
+.logo {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 44px;
+  flex: none;
+  color: var(--ms-text-primary);
+  text-decoration: none;
+  font-family: var(--ms-display-large-font);
+  font-weight: var(--ms-display-large-weight);
+  font-size: 22px;
+  letter-spacing: var(--ms-display-large-tracking);
+}
+
+.logo img {
+  width: 32px;
+  height: 32px;
+}
+
+/* Footer: the app's hero surface, pine in light and dark */
+.site-footer {
+  background: var(--ms-surface-hero);
+  color: var(--ms-text-on-hero);
+  padding: var(--ms-space-4xl) 0 40px;
+}
+
+.site-footer .logo {
+  color: var(--ms-text-on-hero);
+}
+
+.footer-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--ms-space-3xl);
+  flex-wrap: wrap;
+}
+
+.footer-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--ms-space-sm) var(--ms-space-xl);
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.footer-links a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  color: var(--ms-text-on-hero-secondary);
+  text-decoration: none;
+  font-size: 15px;
+}
+
+.footer-links a:hover {
+  color: var(--ms-text-on-hero);
+}
+
+.footer-legal {
+  margin-top: 28px;
+  padding-top: var(--ms-space-2xl);
+  border-top: var(--ms-stroke-hairline) solid var(--ms-contour-on-hero);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.footer-legal p {
+  font-size: 13px;
+  line-height: 1.6;
+  color: var(--ms-text-on-hero-secondary);
+}
+
+/* Legal pages (privacy, terms, support) */
+.legal-header {
+  padding: var(--ms-space-4xl) 0 var(--ms-space-3xl);
+  border-bottom: var(--ms-stroke-hairline) solid var(--ms-border-subtle);
+}
+
+.legal-header .eyebrow {
+  margin-bottom: var(--ms-space-md);
+}
+
+.legal-header .meta {
+  margin-top: var(--ms-space-md);
+  font-size: 15px;
+}
+
+.legal-body {
+  padding: var(--ms-space-4xl) 0 var(--ms-web-section-y);
+}
+
+.legal-body h2 {
+  margin: 40px 0 var(--ms-space-md);
+}
+
+.legal-body h2:first-child {
+  margin-top: 0;
+}
+
+.legal-body h3 {
+  margin: var(--ms-space-2xl) 0 var(--ms-space-sm);
+}
+
+.legal-body p {
+  margin: 0 0 var(--ms-space-lg);
+}
+
+.legal-body ul,
+.legal-body ol {
+  margin: 0 0 var(--ms-space-lg);
+  padding-left: 20px;
+  color: var(--ms-text-secondary);
+}
+
+.legal-body li {
+  margin-bottom: var(--ms-space-sm);
+}
+
+.legal-body strong {
+  color: var(--ms-text-primary);
+  font-weight: 600;
+}
+
+.summary-box {
+  background: var(--ms-surface-raised);
+  border: var(--ms-stroke-hairline) solid var(--ms-border-subtle);
+  border-radius: var(--ms-radius-lg);
+  padding: var(--ms-space-xl) var(--ms-space-2xl) var(--ms-space-sm);
+  margin-bottom: 40px;
+}
+
+.summary-box h2 {
+  margin-top: 0;
+  font-size: var(--ms-display-headline-size);
+  line-height: var(--ms-display-headline-line-height);
+}
+
+.table-scroll {
+  overflow-x: auto;
+  margin: 0 0 var(--ms-space-lg);
+  border: var(--ms-stroke-hairline) solid var(--ms-border-subtle);
+  border-radius: var(--ms-radius-md);
+}
+
+.legal-body table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 15px;
+  min-width: 520px;
+}
+
+.legal-body th,
+.legal-body td {
+  text-align: left;
+  vertical-align: top;
+  padding: var(--ms-space-md) var(--ms-space-lg);
+  border-bottom: var(--ms-stroke-hairline) solid var(--ms-border-subtle);
+  color: var(--ms-text-secondary);
+}
+
+.legal-body tr:last-child td {
+  border-bottom: none;
+}
+
+.legal-body th {
+  background: var(--ms-surface-sunken);
+  color: var(--ms-text-primary);
+  font-weight: 600;
+}
+
+.contact-card {
+  background: var(--ms-surface-raised);
+  border: var(--ms-stroke-hairline) solid var(--ms-border-subtle);
+  border-radius: var(--ms-radius-lg);
+  padding: var(--ms-space-2xl);
+  margin: 0 0 var(--ms-space-2xl);
+}
+
+.contact-card .email {
+  font-family: var(--ms-display-title-2-font);
+  font-weight: var(--ms-display-title-2-weight);
+  font-size: var(--ms-display-title-2-size);
+  letter-spacing: var(--ms-display-title-2-tracking);
+  color: var(--ms-text-primary);
+  user-select: all;
+  -webkit-user-select: all;
+}
+
+.contact-card p:last-child {
+  margin-bottom: 0;
+}
+
+address {
+  font-style: normal;
+  color: var(--ms-text-secondary);
+  margin: 0 0 var(--ms-space-lg);
+}
+
+/* Placeholder still to be filled in before launch */
+.todo {
+  background: var(--ms-surface-sunken);
+  border: var(--ms-stroke-hairline) solid var(--ms-status-caution);
+  color: var(--ms-status-caution);
+  padding: 0 6px;
+  border-radius: var(--ms-radius-sm);
+  font-weight: 600;
+}
+
+/* 404 */
+.not-found {
+  padding: var(--ms-web-section-y) 0;
+  min-height: calc(100vh - 260px);
+  display: flex;
+  align-items: center;
+  text-align: center;
+}
+
+.not-found .wrap {
+  max-width: 560px;
+}
+
+.not-found .eyebrow {
+  margin-bottom: var(--ms-space-md);
+}
+
+.not-found p {
+  margin: var(--ms-space-lg) 0 var(--ms-space-3xl);
+}
+
+.not-found .actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: var(--ms-space-md);
+}
+
+/* Responsive */
+@media (max-width: 720px) {
+  .wrap {
+    padding: 0 var(--ms-space-lg);
+  }
+
+  .legal-wrap {
+    padding: 0 var(--ms-space-lg);
+  }
+
+  .legal-header {
+    padding: var(--ms-space-3xl) 0 var(--ms-space-2xl);
+  }
+
+  .legal-body {
+    padding: var(--ms-space-3xl) 0 64px;
+  }
+
+  .summary-box,
+  .contact-card {
+    padding-left: var(--ms-space-lg);
+    padding-right: var(--ms-space-lg);
+  }
+
+  .footer-row {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--ms-space-lg);
+  }
+}

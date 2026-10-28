@@ -11,7 +11,7 @@
       // so a miss inside an app's folder is handed to that app's own 404 page.
       // (Cloudflare Pages serves the nearest 404.html itself, so there the
       // app pages are found directly.)
-      var apps = ["refuelr"]
+      var apps = ["refuelr", "musette"]
       var app = location.pathname.split("/")[1]
       if (apps.indexOf(app) !== -1) location.replace("/" + app + "/404.html")
     </script>
