@@ -658,6 +658,12 @@ address {
   color: var(--ms-text-on-hero-secondary);
 }
 
+/* Each part keeps its dot and stays whole, so a narrow screen wraps after a dot */
+.hero-note span,
+.cta-note span {
+  white-space: nowrap;
+}
+
 .hero-phone {
   position: relative;
   display: flex;
