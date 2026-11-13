@@ -11,9 +11,12 @@
       // so a miss inside an app's folder is handed to that app's own 404 page.
       // (Cloudflare Pages serves the nearest 404.html itself, so there the
       // app pages are found directly.)
-      var apps = ["refuelr"]
-      var app = location.pathname.split("/")[1]
-      if (apps.indexOf(app) !== -1) location.replace("/" + app + "/404.html")
+      var apps = ["nearempty"]
+      var parts = location.pathname.split("/")
+      var app = parts[1]
+      // Refuelr was renamed NearEmpty: forward any old /refuelr/ path to the same page there.
+      if (app === "refuelr") location.replace("/nearempty/" + parts.slice(2).join("/") + location.hash)
+      else if (apps.indexOf(app) !== -1) location.replace("/" + app + "/404.html")
     </script>
     <!-- Absolute paths only: this page is served at whatever depth was requested. -->
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
@@ -83,7 +86,7 @@
       <p>It may have moved, or the link may be wrong.</p>
       <nav aria-label="Pages">
         <a href="/">SquaredMc home</a>
-        <a href="/refuelr/">Refuelr</a>
+        <a href="/nearempty/">NearEmpty</a>
       </nav>
     </main>
   </body>
