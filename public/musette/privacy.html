@@ -1,12 +1,12 @@
 <!DOCTYPE html>
 <!-- Draft written with AI assistance. Have a solicitor review before launch. -->
-<!-- Describes only what the app does: build 1.0 (1), checked against the Summit-Signal-UI branch at b7f51be on 28 October 2026. Re-check it against the build that ships. -->
+<!-- Describes only what the app does: build 1.1 (5), checked against fix/crashes-1.1-4 at 84c3b6f in workout-pick on 6 November 2026 (iCloud sync D98, History D99–D108, event goals D113–D120, diagnostics D121). Re-check it against the build that ships. -->
 <html lang="en-GB">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Privacy Policy — Musette</title>
-<meta name="description" content="How the Musette app and website use your information: Apple Health data stays on your iPhone, an approximate location goes to Apple for the weather forecast, and there's no account, server, analytics or advertising.">
+<meta name="description" content="How the Musette app and website use your information: Apple Health data stays on your devices, your plan syncs through your own iCloud, an approximate location goes to Apple for the weather forecast, and there's no account, server, analytics or advertising.">
 <link rel="canonical" href="https://squaredmc.com/musette/privacy.html">
 <!-- Not launched yet: remove at launch so search engines can index the site -->
 <meta name="robots" content="noindex">
@@ -49,7 +49,7 @@
     <div class="legal-wrap">
       <span class="eyebrow">Legal</span>
       <h1>Privacy Policy</h1>
-      <p class="meta">Last updated: 28 October 2026 &nbsp;·&nbsp; Applies to the Musette iPhone app and these web pages.</p>
+      <p class="meta">Last updated: 6 November 2026 &nbsp;·&nbsp; Applies to the Musette app for iPhone and iPad and these web pages.</p>
     </div>
   </div>
 
@@ -59,37 +59,39 @@
       <div class="summary-box">
         <h2>The short version</h2>
         <ul>
-          <li>There's no account and no Musette server. Your Apple Health data, your goal and your daily picks stay on your iPhone, apart from anything you add to your calendar, and we never receive any of it.</li>
-          <li>For the weather forecast, Musette sends Apple an approximate location, rounded to about a kilometre. Nothing is sent to us.</li>
-          <li>If you connect your calendar, Musette reads only when you're busy. When you add sessions, it puts them, each with its reason, in a Training calendar that syncs with your calendar account like your other calendars.</li>
+          <li>There's no account and no Musette server. We never receive your Apple Health data, your plan or your daily picks.</li>
+          <li>Your Apple Health data stays on each of your devices. Your plan (your goal, training week, rider numbers, forecast location, daily picks and past events) syncs between your iPhone and iPad through your own private iCloud.</li>
+          <li>For the weather forecast, Musette sends Apple an approximate location, rounded to about a kilometre.</li>
+          <li>If you connect your calendar, Musette reads only when you're busy. The sessions you add go in a Training calendar that syncs with your calendar account like your other calendars.</li>
           <li>No ads, no analytics and no tracking.</li>
         </ul>
       </div>
 
       <h2>1. Who we are</h2>
       <p>
-        Musette is an iPhone app that suggests which Zwift workout to ride today, with the reason, based on your
-        training and recovery in Apple Health and the event you're training for. It's built by SQUAREDMC LTD ("we",
-        "us"), a company registered in England and Wales with company number 16175464, whose registered office is at
-        17 Poole Road, Epsom, KT19 9SQ.
+        Musette is an app for iPhone and iPad that suggests which Zwift workout to ride today, with the reason, based
+        on your training and recovery in Apple Health and the event you're training for. It's built by SQUAREDMC LTD
+        ("we", "us"), a company registered in England and Wales with company number 16175464, whose registered office
+        is at 17 Poole Road, Epsom, KT19 9SQ.
       </p>
       <p>
         This policy explains what information the Musette app and these web pages use, why, and your rights. Most of
-        it never leaves your iPhone, so we don't hold it. For the little we do hold, described in sections 10 and 13,
-        we're the controller. If you have any questions, email us at
+        it stays on your devices or in your own iCloud, so we don't hold it. For the little we do hold, described in
+        sections 11 and 14, we're the controller. If you have any questions, email us at
         <a href="mailto:hello@squaredmc.com">hello@squaredmc.com</a>.
       </p>
 
       <h2>2. Apple Health</h2>
       <p>
         If you allow it, Musette reads these from Apple Health: workouts, heart rate, cycling power, cycling distance,
-        resting heart rate, heart rate variability, sleep, and your date of birth.
+        resting heart rate, heart rate variability, sleep, weight and your date of birth.
       </p>
       <ul>
         <li>
           <strong>What it's for.</strong> Musette uses them to work out your recent training load, how recovered you
-          look, and which workout fits today. Your date of birth gives your age, which is used only to estimate your
-          maximum heart rate if you haven't entered it.
+          look, and which workout fits today. Your weight is used to work out the power your event target needs. Your
+          date of birth gives your age, which is used only to estimate your maximum heart rate if you haven't
+          entered it.
         </li>
         <li>
           <strong>Read only.</strong> Musette never writes to Apple Health.
@@ -100,9 +102,17 @@
           forecast are up to date when you look.
         </li>
         <li>
-          <strong>On your iPhone.</strong> Your Health data is used on your iPhone. It isn't sent to us, and it isn't
-          used for advertising. The one way something based on it can leave your iPhone is the reason for a session
-          you've added to your calendar, described in section 5.
+          <strong>History.</strong> To show how your training has gone over time and to compare one event's build
+          with the last, Musette reads back through your older workouts and resting heart rate and keeps a summary of
+          them in a file on that device. The file isn't synced and isn't included in device backups. If it's lost,
+          Musette reads it again from Apple Health.
+        </li>
+        <li>
+          <strong>On each device.</strong> Your Health data is used on the device that reads it. Musette doesn't send
+          it to us or store it in iCloud, and it isn't used for advertising. On an iPad, Musette reads the Health data
+          that Apple's own Health sync brings to it. Two things based on your Health data can leave your device: the
+          reason line saved with each daily pick, which syncs through your iCloud (section 3), and the reason for a
+          session you add to your calendar (section 5).
         </li>
       </ul>
       <p>
@@ -110,11 +120,48 @@
         Privacy, then Musette.
       </p>
 
-      <h2>3. Information you enter</h2>
+      <h2>3. Your plan and iCloud</h2>
       <p>
-        Your goal (an event's name, date and type, or "just keep me fit"), the time you have to train on each day of
-        the week, and any rider numbers you enter (FTP, maximum heart rate and threshold heart rate) are stored only on
-        your iPhone. They aren't sent to us.
+        If you're signed in to iCloud, Musette keeps your plan in the private database of your own iCloud account, so
+        your iPhone and iPad show the same plan and you only set Musette up once. Your plan is:
+      </p>
+      <ul>
+        <li>
+          your goal: an event's name, date and type, or "just keep me fit". For an event chosen from Musette's list,
+          it also holds the route, your target time and planned stops, and the event's figures when you chose it;
+        </li>
+        <li>your training week, your rider numbers (FTP, maximum heart rate and threshold heart rate) and the place for your weather forecast;</li>
+        <li>your daily picks for the last year, each with its workout, alternative and reason, and which workouts you've been given recently; and</li>
+        <li>
+          your past events: each one's name, date and type and, if you answer "How did it go?", how it went and any
+          note you write.
+        </li>
+      </ul>
+      <p>
+        Your Health data isn't part of your plan. A pick's reason can mention something like a low heart rate
+        variability or short sleep, but the numbers behind it aren't stored. Your weight, and the fitness, fatigue,
+        power and heart rate figures Musette works out, are never stored in iCloud.
+      </p>
+      <ul>
+        <li>
+          <strong>Who can see it.</strong> Only you, through your Apple Account. We can't see it. Apple encrypts it,
+          and if you've turned on Advanced Data Protection for iCloud, it's end-to-end encrypted. Apple's iCloud terms
+          and privacy policy apply.
+        </li>
+        <li>
+          <strong>Turning it off.</strong> To stop syncing, open the Settings app, tap your name, then iCloud, and
+          turn Musette off. Musette then keeps your plan on that device only. If you're not signed in to iCloud, it
+          does that anyway.
+        </li>
+        <li>
+          <strong>After you delete the app.</strong> Deleting Musette doesn't remove your plan from iCloud, so it
+          comes back if you reinstall. To remove it, delete Musette's data from your iCloud storage in the Settings
+          app (your name, then iCloud), or email us and we'll help.
+        </li>
+      </ul>
+      <p>
+        If Apple Health has no weight for you, Musette asks you to type it in. A weight you type is kept only on that
+        device and isn't synced.
       </p>
 
       <h2>4. Location and weather</h2>
@@ -126,9 +173,9 @@
         <li>
           <strong>Approximate and occasional.</strong> The first time you open the Week tab, Musette asks for location
           access "While Using the App". If you allow it, Musette takes a single reading and rounds it to two decimal
-          places, about a kilometre, and keeps that rounded position as the place for your forecast. You can take a
-          new reading later with <em>Use my approximate location</em>. Musette doesn't follow where you go, and it
-          never asks for "Always" access.
+          places, about a kilometre, and keeps that rounded position as the place for your forecast. It's kept with
+          your plan, so it syncs through your iCloud (section 3). You can take a new reading later with <em>Use my
+          approximate location</em>. Musette doesn't follow where you go, and it never asks for "Always" access.
         </li>
         <li>
           <strong>Or a town.</strong> You can type a town instead. The text you type goes to Apple to find the place.
@@ -144,15 +191,15 @@
       <p>
         You can remove the location at any time on the Week tab: tap <em>Change location</em>, then <em>Forget the
         forecast location</em>. You can turn off location access in iOS Settings → Privacy &amp; Security → Location
-        Services → Musette. Without a location the week
-        loses its indoor and outdoor labels, and everything else keeps working. Weather data is provided by
+        Services → Musette. Without a location the week loses its indoor and outdoor labels, and everything else
+        keeps working. Weather data is provided by
         <a href="https://weatherkit.apple.com/legal-attribution.html" target="_blank" rel="noopener">Apple Weather</a>.
       </p>
 
       <h2>5. Calendar</h2>
       <p>
         Connecting your calendar is optional, and Musette works fully without it. If you connect it, iOS asks you to
-        give Musette full access to your calendars.
+        give Musette full access to your calendars. Calendar access is set up on each device separately.
       </p>
       <ul>
         <li>
@@ -171,10 +218,9 @@
         </li>
         <li>
           <strong>Where that calendar lives.</strong> Musette creates the Training calendar in your default calendar
-          account, or, if it can't, in another calendar account or on your iPhone only. If it's in iCloud, Google or
-          another online account, the Training calendar and its events sync to
-          it like your other calendars, and that provider's privacy policy applies to them. No calendar data is sent
-          to us.
+          account, or, if it can't, in another calendar account or on that device only. If it's in iCloud, Google or
+          another online account, the Training calendar and its events sync to it like your other calendars, and that
+          provider's privacy policy applies to them. No calendar data is sent to us, and none is part of your plan.
         </li>
       </ul>
       <p>
@@ -183,28 +229,51 @@
       </p>
 
       <h2>6. Notifications</h2>
-      <p>
-        If you turn on <em>Remind me Sundays at 18:00</em> on the Week tab, Musette schedules one notification a week
-        on your iPhone, saying your week is ready. It doesn't send any other notifications, and they don't come from a
-        server. You can turn it off on the Week tab or in iOS Settings → Notifications → Musette.
-      </p>
-
-      <h2>7. The widget</h2>
-      <p>
-        The app and its Home Screen widget share a storage area on your iPhone that only they can use. It holds the
-        information listed in section 8, and the widget shows today's pick from it.
-      </p>
-
-      <h2>8. What's stored on your iPhone</h2>
-      <p>Musette keeps these on your iPhone so it can work without an account:</p>
+      <p>Musette can send two kinds of notification, and only if you allow them:</p>
       <ul>
-        <li>your goal, your week's training times and your rider numbers;</li>
-        <li>today's pick and the last 30 days of picks;</li>
+        <li>
+          <strong>Weekly.</strong> If you turn on <em>Remind me Sundays at 18:00</em> on the Week tab, a notification
+          each Sunday says your week is ready.
+        </li>
+        <li>
+          <strong>Event changes.</strong> If you set a goal from Musette's event list and allow notifications, Musette
+          tells you once when something important about that event changes, such as its route being confirmed, its
+          date moving or the event being cancelled.
+        </li>
+      </ul>
+      <p>
+        Both are scheduled by the app on your device. They don't come from a server. You can turn them off in iOS
+        Settings → Notifications → Musette, and the weekly one on the Week tab.
+      </p>
+
+      <h2>7. Events and links</h2>
+      <p>
+        Musette's list of events is built into the app, and Musette doesn't contact any server to fetch it. An event's
+        page can link to the organiser's website. If you tap it, the site opens in your browser, and the organiser's
+        own privacy policy applies there.
+      </p>
+
+      <h2>8. The widget</h2>
+      <p>
+        The app and its Home Screen widget share a storage area on your device that only they can use. The widget
+        shows today's pick and your event countdown from it.
+      </p>
+
+      <h2>9. What's stored on each device</h2>
+      <p>Musette keeps these on each device it's installed on:</p>
+      <ul>
+        <li>a copy of your plan (section 3), which is the only part that syncs;</li>
+        <li>a weight you've typed, and whether Health, location, calendar and notifications are set up on that device;</li>
         <li>the coming days' training slots, and which calendar events Musette added;</li>
-        <li>the rounded location or town for the forecast, and the latest forecast;</li>
+        <li>the latest forecast;</li>
+        <li>the summary of your older workouts and resting heart rate used by History (section 2);</li>
         <li>
           a technical log of what the app did, such as when it refreshed, including some of the numbers it worked
-          from, such as your heart rate numbers, FTP and event date; and
+          from, such as your heart rate numbers, FTP and event date;
+        </li>
+        <li>
+          crash and hang reports, which Apple's MetricKit gives the app. Musette keeps the newest 50 on the device and
+          leaves them out of backups; and
         </li>
         <!-- Remove this item if the diagnostics screen is taken out of App Store builds. -->
         <li>
@@ -213,20 +282,21 @@
         </li>
       </ul>
       <p>
-        None of this is sent to us. Like other apps' data, it's included in your iPhone's backups to iCloud or a
-        computer if you make them. Deleting Musette deletes all of it, apart from the Training calendar described in
-        section 5.
+        None of this is sent to us unless you choose to share it (section 11). Apart from the History summary and the
+        crash reports, it's included in your device's backups to iCloud or a computer if you make them. Deleting
+        Musette deletes all of it from that device, apart from the Training calendar described in section 5. Your plan
+        stays in your iCloud, as section 3 explains.
       </p>
 
-      <h2>9. Zwift</h2>
+      <h2>10. Zwift</h2>
       <p>
         Musette suggests workouts from Zwift's library. Its Zwift button opens the Zwift app, or Zwift Companion if
         that's what you have, or Zwift's page on the App Store if neither is installed. Nothing is sent to Zwift,
-        and Musette doesn't connect to your Zwift account. Zwift's own privacy policy applies when you use Zwift. Musette isn't affiliated
-        with or endorsed by Zwift, Inc.
+        and Musette doesn't connect to your Zwift account. Zwift's own privacy policy applies when you use Zwift.
+        Musette isn't affiliated with or endorsed by Zwift, Inc.
       </p>
 
-      <h2>10. The beta</h2>
+      <h2>11. The beta</h2>
       <p>
         While Musette is in beta, we invite testers ourselves through Apple's TestFlight. If you're one of them:
       </p>
@@ -234,24 +304,28 @@
         <li>we hold the name and email address we used to invite you, in our Apple developer account;</li>
         <li>
           TestFlight tells us when you install the beta and how often it's used, and shares crash reports with us,
-          along with your device model and iOS version; and
+          along with your device model and iOS version;
         </li>
-        <li>if you send feedback through TestFlight, we receive what you write and any screenshot you attach.</li>
+        <li>if you send feedback through TestFlight, we receive what you write and any screenshot you attach; and</li>
+        <li>
+          beta builds have a <em>Diagnostics</em> screen in Settings. If you use it to share the crash reports and the
+          technical log described in section 9, we receive what you send. Nothing is sent unless you choose to.
+        </li>
       </ul>
       <p>
         We use this only to run the beta and improve Musette. We remove you from TestFlight when the beta ends or
         if you ask us to. Apple's TestFlight terms and privacy policy also apply.
       </p>
 
-      <h2>11. Usage, analytics and crash data</h2>
+      <h2>12. Usage, analytics and crash data</h2>
       <p>
-        Musette doesn't include any analytics, advertising or crash-reporting tools. Apart from the beta, described in
-        section 10, the only crash reports we see come from Apple: if you've chosen to share analytics with app
-        developers in your iPhone's settings, Apple may share crash reports and usage statistics with us, which don't
-        identify you. If we ever add analytics, we'll update this policy before that collection starts.
+        Musette doesn't include any analytics, advertising or third-party crash-reporting tools. Apart from the beta,
+        described in section 11, the only crash reports we see come from Apple: if you've chosen to share analytics
+        with app developers in your device's settings, Apple may share crash reports and usage statistics with us,
+        which don't identify you. If we ever add analytics, we'll update this policy before that collection starts.
       </p>
 
-      <h2>12. What we don't collect</h2>
+      <h2>13. What we don't collect</h2>
       <p>
         There's no account, so we don't collect your name, email address or phone number (unless you're a beta tester
         or you email us). Musette doesn't access your contacts, photos, camera or microphone. It doesn't show ads,
@@ -262,7 +336,7 @@
         you.
       </p>
 
-      <h2>13. Third parties</h2>
+      <h2>14. Third parties</h2>
       <p>Musette and these web pages rely on:</p>
       <div class="table-scroll">
         <table>
@@ -272,7 +346,7 @@
           <tbody>
             <tr>
               <td>Apple</td>
-              <td>The weather forecast and place names (receives the rounded location or the town you type), TestFlight for the beta, and App Store distribution.</td>
+              <td>iCloud, which stores and syncs your plan in your own account; the weather forecast and place names (receives the rounded location or the town you type); TestFlight for the beta; and App Store distribution.</td>
               <td><a href="https://www.apple.com/legal/privacy/" target="_blank" rel="noopener">apple.com/legal/privacy</a></td>
             </tr>
             <tr>
@@ -294,17 +368,17 @@
         contractual clauses.
       </p>
 
-      <h2>14. Legal basis and your rights</h2>
+      <h2>15. Legal basis and your rights</h2>
       <p>
         Under UK data protection law (the UK GDPR and the Data Protection Act 2018), we rely on our
-        <strong>legitimate interests</strong> to hold beta testers' details and TestFlight reports so we can run the
-        beta, and to reply when you email us. Your Health data, location and calendar never reach us, so we don't
-        process them.
+        <strong>legitimate interests</strong> to hold beta testers' details, TestFlight reports and any diagnostics
+        testers share, so we can run the beta, and to reply when you email us. Your Health data, location, calendar
+        and the plan in your iCloud never reach us, so we don't process them.
       </p>
       <p>
         You have the right to access, correct or delete your personal data, to object to or restrict how we use it,
         and to data portability. For beta testers we can give you, correct or delete what we hold. Everything else
-        lives only on your iPhone, where you control it, and deleting Musette removes it.
+        lives on your devices and in your own iCloud, where you control it, as sections 3 and 9 describe.
       </p>
       <p>
         To make a request, email <a href="mailto:hello@squaredmc.com">hello@squaredmc.com</a>. If you're unhappy with
@@ -312,26 +386,26 @@
         <a href="https://ico.org.uk/make-a-complaint/" target="_blank" rel="noopener">ico.org.uk</a> or on 0303 123 1113.
       </p>
 
-      <h2>15. Children</h2>
+      <h2>16. Children</h2>
       <p>
         Musette isn't aimed at children under 13, and we don't knowingly collect information from them. If you think a
         child has sent us information, contact us and we'll delete it.
       </p>
 
-      <h2>16. Changes to this policy</h2>
+      <h2>17. Changes to this policy</h2>
       <p>
         If we change this policy, we'll update the date at the top of this page. If a change is significant, we'll also
         tell you in the app or in the App Store release notes.
       </p>
 
-      <h2>17. These web pages</h2>
+      <h2>18. These web pages</h2>
       <p>
         The Musette pages at squaredmc.com/musette/ don't use cookies, analytics or advertising. They're hosted on
         GitHub Pages, which may log your IP address to keep the site secure and running. The fonts are served from
         this site, so no font provider receives your IP address.
       </p>
 
-      <h2 id="contact-us">18. Contact us</h2>
+      <h2 id="contact-us">19. Contact us</h2>
       <p>Questions about this policy or your information:</p>
       <address>
         SQUAREDMC LTD<br>
